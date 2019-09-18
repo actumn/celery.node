@@ -1,0 +1,6 @@
+.git*
+.vscode
+.idea
+src/
+test/
+examples/
