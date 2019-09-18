@@ -1,0 +1,46 @@
+{
+  "name": "celery-node",
+  "version": "0.0.0",
+  "description": "celery written in nodejs",
+  "main": "index.js",
+  "scripts": {
+    "lint": "./node_modules/.bin/eslint src test",
+    "dist": "babel src -d dist",
+    "test": "./node_modules/.bin/mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/actumn/celery.node.git"
+  },
+  "keywords": [
+    "node-celery",
+    "celery",
+    "celery-node",
+    "task queue"
+  ],
+  "author": "actumn814@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/actumn/celery.node/issues"
+  },
+  "homepage": "https://github.com/actumn/celery.node#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.6.0",
+    "@babel/core": "^7.6.0",
+    "@babel/preset-env": "^7.6.0",
+    "@babel/register": "^7.6.0",
+    "chai": "^4.2.0",
+    "eslint": "^5.11.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-mocha": "^5.2.0",
+    "mocha": "^5.2.0",
+    "sinon": "^7.2.2"
+  },
+  "dependencies": {
+    "amqplib": "^0.5.5",
+    "ioredis": "^4.14.0",
+    "uuid": "^3.3.2",
+    "winston": "^3.1.0"
+  }
+}

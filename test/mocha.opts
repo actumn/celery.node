@@ -1,0 +1,4 @@
+-R spec
+--timeout 10000
+test/**/test_*.js
+--compilers js:@babel/register
