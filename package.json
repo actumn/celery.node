@@ -6,7 +6,8 @@
   "scripts": {
     "lint": "./node_modules/.bin/eslint src test",
     "dist": "babel src -d dist",
-    "test": "./node_modules/.bin/mocha"
+    "test": "./node_modules/.bin/mocha",
+    "doc:internal": "jsdoc2md src/*/*.js src/*/*/*.js > docs/internals.md"
   },
   "repository": {
     "type": "git",
@@ -16,7 +17,12 @@
     "node-celery",
     "celery",
     "celery-node",
-    "task queue"
+    "task",
+    "worker",
+    "queue",
+    "background",
+    "rabbitmq",
+    "redis"
   ],
   "author": "actumn814@gmail.com",
   "license": "MIT",
@@ -34,6 +40,7 @@
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-mocha": "^5.2.0",
+    "jsdoc-to-markdown": "^5.0.1",
     "mocha": "^5.2.0",
     "sinon": "^7.2.2"
   },

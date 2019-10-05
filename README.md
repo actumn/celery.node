@@ -72,7 +72,7 @@ So that if you want to make celery.node communicate with celery, you must set `C
 ```sh
 $ npm install celery-node
 ```
-## Example
+## Getting started
 ### Client
 #### celery.node
 ```javascript

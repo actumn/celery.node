@@ -5,7 +5,8 @@
   ],
   "rules": {
     "mocha/no-exclusive-tests": "error",
-    "prefer-rest-params": "off"
+    "prefer-rest-params": "off",
+    "max-len": ["error", { "code": 200, "ignoreComments": true }]
   },
   "env": {
     "mocha": true

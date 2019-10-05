@@ -1,6 +1,11 @@
 import amqplib from 'amqplib';
 
 export default class AMQPBackend {
+  /**
+   * AMQP backend class
+   * @constructor AMQPBackend
+   * @param {object} opts the options object for amqp connect of amqplib
+   */
   constructor(opts) {
     this.connect = amqplib.connect(opts);
     this.channel = this.connect
@@ -14,14 +19,30 @@ export default class AMQPBackend {
       }).then(() => Promise.resolve(ch)));
   }
 
+  /**
+   * @method AMQPBackend#isReady
+   * @returns {Promise} promises that continues if amqp connected.
+   */
   isReady() {
     return this.connect;
   }
 
+  /**
+   * @method AMQPBackend#disconnect
+   * @returns {Promise} promises that continues if amqp disconnected.
+   */
   disconnect() {
     return this.connect.then(conn => conn.close());
   }
 
+  /**
+   * store result method on backend
+   * @method AMQPBackend#storeResult
+   * @param {String} taskId
+   * @param {*} result result of task. i.e the return value of task handler
+   * @param {String} state
+   * @returns {Promise}
+   */
   storeResult(taskId, result, state) {
     const queue = taskId.replace(/-/g, '');
     return this.channel
@@ -47,6 +68,12 @@ export default class AMQPBackend {
       }));
   }
 
+  /**
+   * get result data from backend
+   * @method AMQPBackend#getTaskMeta
+   * @param {String} taskId
+   * @returns {Promise}
+   */
   getTaskMeta(taskId) {
     const queue = taskId.replace(/-/g, '');
     return this.channel

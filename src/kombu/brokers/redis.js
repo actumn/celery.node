@@ -3,15 +3,20 @@ import uuid from 'uuid';
 import logger from '../../logger';
 
 export default class RedisBroker {
+  /**
+   * Redis broker class
+   * @constructor RedisBroker
+   * @param {object} opts the options object for redis connect of ioredis
+   */
   constructor(opts) {
     this.redis = new Redis(opts);
   }
 
-  disconnect() {
-    return this.redis.quit();
-  }
-
-  // codes from here: https://github.com/OptimalBits/bull/blob/129c6e108ce67ca343c8532161d06742d92b651c/lib/utils.js#L21-L44
+  /**
+   * codes from here: https://github.com/OptimalBits/bull/blob/129c6e108ce67ca343c8532161d06742d92b651c/lib/utils.js#L21-L44
+   * @method RedisBroker#isReady
+   * @returns {Promise} promises that continues if redis connected.
+   */
   isReady() {
     return new Promise((resolve, reject) => {
       if (this.redis.status === 'ready') {
@@ -33,6 +38,20 @@ export default class RedisBroker {
     });
   }
 
+  /**
+   * @method RedisBroker#disconnect
+   * @returns {Promise} promises that continues if redis disconnected.
+   */
+  disconnect() {
+    return this.redis.quit();
+  }
+
+  /**
+   * @method RedisBroker#publish
+   * @param {String} queue
+   * @param {String} message
+   * @returns {Promise}
+   */
   publish(queue, message) {
     return new Promise((resolve, reject) => {
       this.redis.lpush(queue, JSON.stringify({
@@ -61,6 +80,12 @@ export default class RedisBroker {
     });
   }
 
+  /**
+   * @method RedisBroker#subscribe
+   * @param {String} queue
+   * @param {Function} callback
+   * @returns {Promise}
+   */
   subscribe(queue, callback) {
     const promiseCount = 1;
     const promises = [];
@@ -77,10 +102,23 @@ export default class RedisBroker {
       });
   }
 
+  /**
+   * @private
+   * @param {Number} index
+   * @param {String} queue
+   * @param {Function} callback
+   */
   consumeTasks(index, queue, callback) {
     process.nextTick(() => this.consumeTaskOnNextTick(index, queue, callback));
   }
 
+  /**
+   * @private
+   * @param {Number} index
+   * @param {String} queue
+   * @param {Function} callback
+   * @returns {Promise}
+   */
   consumeTaskOnNextTick(index, queue, callback) {
     return this.basicConsume(queue)
       .then((body) => {
@@ -91,6 +129,11 @@ export default class RedisBroker {
       .catch(err => logger.error(err));
   }
 
+  /**
+   * @private
+   * @param {String} queue
+   * @return {Promise}
+   */
   basicConsume(queue) {
     return new Promise((resolve, reject) => {
       this.redis.brpop(queue, 5, (err, item) => {
@@ -98,12 +141,15 @@ export default class RedisBroker {
           reject(err);
         } else if (item) {
           const task = JSON.parse(item[1]);
+          // now supports only application/json of content-type
           if (task['content-type'] !== 'application/json') {
             throw new Error(`unsupported content type ${task['content-type']}`);
           }
+          // now supports only base64 of body_encoding
           if (task.properties.body_encoding !== 'base64') {
             throw new Error(`unsupported body encoding ${task.properties.body_encoding}`);
           }
+          // now supports only utf-9 of content-encoding
           if (task['content-encoding'] !== 'utf-8') {
             throw new Error(`unsupported content encoding ${task['content-encoding']}`);
           }
