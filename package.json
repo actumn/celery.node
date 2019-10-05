@@ -7,7 +7,7 @@
     "lint": "./node_modules/.bin/eslint src test",
     "dist": "babel src -d dist",
     "test": "./node_modules/.bin/mocha",
-    "doc:internal": "jsdoc2md src/*/*.js src/*/*/*.js > docs/internals.md"
+    "doc:internal": "jsdoc2md src/*/*.js src/*/*/*.js > docs/internal.md"
   },
   "repository": {
     "type": "git",
