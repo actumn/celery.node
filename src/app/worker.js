@@ -53,7 +53,7 @@ export default class Worker extends Base {
    * worker.start();
    */
   start() {
-    logger.info('celery.js worker start...');
+    logger.info('celery.node worker start...');
     logger.info(`registed task: ${Object.keys(this.handlers)}`);
     return this.run().catch(err => logger.error(err));
   }
@@ -94,9 +94,10 @@ export default class Worker extends Base {
 
       const handler = this.handlers[body.task];
       if (!handler) {
-        throw new Error(`Missing process handler for task ${body.name}`);
+        throw new Error(`Missing process handler for task ${body.task}`);
       }
 
+      logger.info(`celery.node receive task: ${body.task}, args: ${body.args}, kwargs: ${JSON.stringify(body.kwargs)}`);
       const taskPromise = handler(...body.args, body.kwargs);
       return taskPromise
         .then((result) => {

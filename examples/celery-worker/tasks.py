@@ -1,5 +1,3 @@
-import os
-import logging
 from celery import Celery
 
 celery = Celery('tasks', 

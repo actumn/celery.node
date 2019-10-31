@@ -64,6 +64,13 @@ export default class AMQPBroker {
    */
   subscribe(queue, callback) {
     return this.channel
+      .then(ch => ch.assertQueue(queue, {
+        durable: true,
+        autoDelete: false,
+        exclusive: false,
+        nowait: false,
+        arguments: null,
+      }).then(() => Promise.resolve(ch)))
       .then(ch => ch.consume(queue, (msg) => {
         ch.ack(msg);
 
