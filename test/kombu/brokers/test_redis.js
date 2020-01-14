@@ -1,17 +1,13 @@
 import { assert } from 'chai';
 import RedisBroker from '../../../src/kombu/brokers/redis';
 
-const redisOpts = {
-  host: 'localhost',
-  port: 6379,
-  db: 1,
-};
+const redisUrl = 'redis://localhost:6379/1';
 
 
 describe('redis broker', () => {
   describe('publish', () => {
     it('just publish', (done) => {
-      const broker = new RedisBroker(redisOpts);
+      const broker = new RedisBroker(redisUrl);
 
       broker.publish('publish', '{ "a": 1 }').then((reply) => {
         assert.isNumber(reply);
@@ -23,7 +19,7 @@ describe('redis broker', () => {
 
   describe('subscribe', () => {
     it('with publish', (done) => {
-      const broker = new RedisBroker(redisOpts);
+      const broker = new RedisBroker(redisUrl);
 
       broker.publish('subscribe', '{ "a": 1 }')
         .then(() => broker.subscribe('subscribe', (body) => {
@@ -34,7 +30,7 @@ describe('redis broker', () => {
     });
 
     it('with empty queue', (done) => {
-      const broker = new RedisBroker(redisOpts);
+      const broker = new RedisBroker(redisUrl);
 
       broker.subscribe('empty', (body) => {
         assert.equal(body, null);

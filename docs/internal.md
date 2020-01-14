@@ -294,7 +294,7 @@ worker.start();
 **Kind**: global class  
 
 * [AMQPBackend](#AMQPBackend)
-    * [new AMQPBackend(opts)](#new_AMQPBackend_new)
+    * [new AMQPBackend(url, opts)](#new_AMQPBackend_new)
     * [.isReady()](#AMQPBackend+isReady) ⇒ <code>Promise</code>
     * [.disconnect()](#AMQPBackend+disconnect) ⇒ <code>Promise</code>
     * [.storeResult(taskId, result, state)](#AMQPBackend+storeResult) ⇒ <code>Promise</code>
@@ -302,12 +302,13 @@ worker.start();
 
 <a name="new_AMQPBackend_new"></a>
 
-### new AMQPBackend(opts)
+### new AMQPBackend(url, opts)
 AMQP backend class
 
 
 | Param | Type | Description |
 | --- | --- | --- |
+| url | <code>string</code> | the connection string of amqp |
 | opts | <code>object</code> | the options object for amqp connect of amqplib |
 
 <a name="AMQPBackend+isReady"></a>
@@ -350,7 +351,7 @@ get result data from backend
 **Kind**: global class  
 
 * [RedisBackend](#RedisBackend)
-    * [new RedisBackend(opts)](#new_RedisBackend_new)
+    * [new RedisBackend(url, opts)](#new_RedisBackend_new)
     * [.isReady()](#RedisBackend+isReady) ⇒ <code>Promise</code>
     * [.disconnect()](#RedisBackend+disconnect) ⇒ <code>Promise</code>
     * [.storeResult(taskId, result, state)](#RedisBackend+storeResult)
@@ -358,12 +359,13 @@ get result data from backend
 
 <a name="new_RedisBackend_new"></a>
 
-### new RedisBackend(opts)
+### new RedisBackend(url, opts)
 Redis backend class
 
 
 | Param | Type | Description |
 | --- | --- | --- |
+| url | <code>string</code> | the connection string of redis |
 | opts | <code>object</code> | the options object for redis connect of ioredis |
 
 <a name="RedisBackend+isReady"></a>
@@ -404,7 +406,7 @@ codes from here: https://github.com/OptimalBits/bull/blob/129c6e108ce67ca343c853
 **Kind**: global class  
 
 * [AMQPBroker](#AMQPBroker)
-    * [new AMQPBroker(opts)](#new_AMQPBroker_new)
+    * [new AMQPBroker(url, opts)](#new_AMQPBroker_new)
     * [.isReady()](#AMQPBroker+isReady) ⇒ <code>Promise</code>
     * [.disconnect()](#AMQPBroker+disconnect) ⇒ <code>Promise</code>
     * [.publish(queue, message)](#AMQPBroker+publish) ⇒ <code>Promise</code>
@@ -412,12 +414,13 @@ codes from here: https://github.com/OptimalBits/bull/blob/129c6e108ce67ca343c853
 
 <a name="new_AMQPBroker_new"></a>
 
-### new AMQPBroker(opts)
+### new AMQPBroker(url, opts)
 AMQP broker class
 
 
 | Param | Type | Description |
 | --- | --- | --- |
+| url | <code>string</code> | the connection string of amqp |
 | opts | <code>object</code> | the options object for amqp connect of amqplib |
 
 <a name="AMQPBroker+isReady"></a>

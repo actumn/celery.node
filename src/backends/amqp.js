@@ -4,10 +4,11 @@ export default class AMQPBackend {
   /**
    * AMQP backend class
    * @constructor AMQPBackend
+   * @param {string} url the connection string of amqp
    * @param {object} opts the options object for amqp connect of amqplib
    */
-  constructor(opts) {
-    this.connect = amqplib.connect(opts);
+  constructor(url, opts) {
+    this.connect = amqplib.connect(url, opts);
     this.channel = this.connect
       .then(conn => conn.createChannel())
       .then(ch => ch.assertExchange('default', 'direct', {

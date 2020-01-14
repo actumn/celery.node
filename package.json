@@ -1,6 +1,6 @@
 {
   "name": "celery-node",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "celery written in nodejs",
   "main": "index.js",
   "scripts": {
@@ -31,23 +31,23 @@
   },
   "homepage": "https://github.com/actumn/celery.node#readme",
   "devDependencies": {
-    "@babel/cli": "^7.6.0",
-    "@babel/core": "^7.6.0",
-    "@babel/preset-env": "^7.6.0",
-    "@babel/register": "^7.6.0",
+    "@babel/cli": "^7.8.3",
+    "@babel/core": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "@babel/register": "^7.8.3",
     "chai": "^4.2.0",
-    "eslint": "^5.11.1",
-    "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-mocha": "^5.2.0",
-    "jsdoc-to-markdown": "^5.0.1",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.2.0",
+    "eslint-plugin-import": "^2.20.0",
+    "eslint-plugin-mocha": "^5.3.0",
+    "jsdoc-to-markdown": "^5.0.3",
     "mocha": "^5.2.0",
-    "sinon": "^7.2.2"
+    "sinon": "^7.5.0"
   },
   "dependencies": {
     "amqplib": "^0.5.5",
-    "ioredis": "^4.14.0",
-    "uuid": "^3.3.2",
-    "winston": "^3.1.0"
+    "ioredis": "^4.14.1",
+    "uuid": "^3.3.3",
+    "winston": "^3.2.1"
   }
 }

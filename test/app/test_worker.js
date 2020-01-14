@@ -76,8 +76,8 @@ describe('node celery worker with redis broker', () => {
 
 describe('node celery worker with amqp broker', () => {
   const celeryOpts = {
-    CELERY_BROKER: 'amqp://',
-    CELERY_BACKEND: 'amqp://',
+    CELERY_BROKER: 'amqp://test:password@localhost',
+    CELERY_BACKEND: 'amqp://test:password@localhost',
   };
 
   describe('worker running with amqp broker', () => {
