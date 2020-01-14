@@ -1,7 +1,6 @@
 import Redis from 'ioredis';
 import urllib from 'url';
 import uuid from 'uuid';
-import logger from '../../logger';
 
 /**
  * codes from bull: https://github.com/OptimalBits/bull/blob/129c6e108ce67ca343c8532161d06742d92b651c/lib/queue.js#L296-L310
@@ -151,7 +150,7 @@ export default class RedisBroker {
         Promise.resolve();
       })
       .then(() => this.consumeTasks(index, queue, callback))
-      .catch(err => logger.error(err));
+      .catch(err => console.error(err));
   }
 
   /**
