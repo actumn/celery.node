@@ -152,7 +152,6 @@ Before contributing, please read [contributing.md](./contributing.md)
 Let's make this project more awesome!  
 
 ## Community
-Notion: https://www.notion.so/celerynode  
 Slack: https://celerynode.slack.com  
 
 ## License
