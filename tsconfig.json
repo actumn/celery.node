@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
-      "outDir": "./built",
+      "outDir": "./dist",
       "allowJs": true,
       "target": "es5",
-      "noEmitOnError": true
+      "noEmitOnError": true,
+      "typeRoots": ["./node_modules/@types", "./@types"]
   },
   "include": [
       "./src/**/*"

@@ -1,21 +1,25 @@
-import amqplib from 'amqplib';
+import * as amqplib from 'amqplib';
+import { CeleryBackend } from '.';
 
-export default class AMQPBackend {
+export default class AMQPBackend implements CeleryBackend {
+  connect: Promise<amqplib.Connection>
+  channel: Promise<amqplib.Channel>
+
   /**
    * AMQP backend class
    * @constructor AMQPBackend
    * @param {string} url the connection string of amqp
    * @param {object} opts the options object for amqp connect of amqplib
    */
-  constructor(url, opts) {
+  constructor(url: string, opts: object) {
     this.connect = amqplib.connect(url, opts);
     this.channel = this.connect
       .then(conn => conn.createChannel())
       .then(ch => ch.assertExchange('default', 'direct', {
         durable: true,
-        autoDElete: true,
+        autoDelete: true,
         internal: false,
-        nowait: false,
+        // nowait: false,
         arguments: null,
       }).then(() => Promise.resolve(ch)));
   }
@@ -24,7 +28,7 @@ export default class AMQPBackend {
    * @method AMQPBackend#isReady
    * @returns {Promise} promises that continues if amqp connected.
    */
-  isReady() {
+  isReady(): Promise<amqplib.Connection> {
     return this.connect;
   }
 
@@ -32,7 +36,7 @@ export default class AMQPBackend {
    * @method AMQPBackend#disconnect
    * @returns {Promise} promises that continues if amqp disconnected.
    */
-  disconnect() {
+  disconnect(): Promise<void> {
     return this.connect.then(conn => conn.close());
   }
 
@@ -40,18 +44,22 @@ export default class AMQPBackend {
    * store result method on backend
    * @method AMQPBackend#storeResult
    * @param {String} taskId
-   * @param {*} result result of task. i.e the return value of task handler
+   * @param {any} result result of task. i.e the return value of task handler
    * @param {String} state
    * @returns {Promise}
    */
-  storeResult(taskId, result, state) {
+  storeResult(
+    taskId: string, 
+    result: any, 
+    state: string
+  ): Promise<boolean> {
     const queue = taskId.replace(/-/g, '');
     return this.channel
       .then(ch => ch.assertQueue(queue, {
         durable: true,
         autoDelete: true,
         exclusive: false,
-        nowait: false,
+        // nowait: false,
         arguments: {
           'x-expires': 86400000,
         },
@@ -75,14 +83,14 @@ export default class AMQPBackend {
    * @param {String} taskId
    * @returns {Promise}
    */
-  getTaskMeta(taskId) {
+  getTaskMeta(taskId: string): Promise<any> {
     const queue = taskId.replace(/-/g, '');
     return this.channel
       .then(ch => ch.assertQueue(queue, {
         durable: true,
         autoDelete: true,
         exclusive: false,
-        nowait: false,
+        // nowait: false,
         arguments: {
           'x-expires': 86400000,
         },
@@ -91,6 +99,10 @@ export default class AMQPBackend {
         noAck: false,
       }))
       .then((msg) => {
+        if (msg === false) {
+          throw new Error(`AMQPBackend try get msg from empty queue`);
+        }
+
         if (msg.properties.contentType !== 'application/json') {
           throw new Error(`unsupported content type ${msg.properties.contentType}`);
         }

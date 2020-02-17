@@ -1,6 +1,14 @@
-import url from 'url';
+import * as url from 'url';
 import RedisBroker from './redis';
 import AMQPBroker from './amqp';
+
+export interface CeleryBroker {
+  isReady: () => Promise<any>,
+  disconnect: () => Promise<any>,
+  publish: (queue: string, message: string) => Promise<any>,
+  subscribe: (queue: string, callback: Function) => Promise<any>,
+}
+
 /**
  * Support broker protocols of celery.node.
  * @private
@@ -18,7 +26,7 @@ const supportedProtocols = ['redis', 'amqp'];
  * @returns {String} protocol string.
  * @throws {Error} when url has unsupported protocols
  */
-function getProtocol(uri) {
+function getProtocol(uri): string {
   const protocol = url.parse(uri).protocol.slice(0, -1);
   if (supportedProtocols.indexOf(protocol) === -1) {
     throw new Error(`Unsupported type: ${protocol}`);
@@ -30,9 +38,9 @@ function getProtocol(uri) {
  * 
  * @param {String} CELERY_BROKER 
  * @param {String} CELERY_BROKER_OPTIONS 
- * @returns {AMQPBroker | RedisBroker}
+ * @returns {CeleryBroker}
  */
-export default function CeleryBroker(CELERY_BROKER, CELERY_BROKER_OPTIONS) {
+export function newCeleryBroker(CELERY_BROKER, CELERY_BROKER_OPTIONS): CeleryBroker {
   const brokerProtocol = getProtocol(CELERY_BROKER);
   if (brokerProtocol === 'redis') {
     return new RedisBroker(CELERY_BROKER, CELERY_BROKER_OPTIONS);

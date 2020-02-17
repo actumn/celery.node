@@ -1,7 +1,8 @@
-import uuid from 'uuid';
+import { v4 } from 'uuid';
+import { CeleryConf, DEFAULT_CELERY_CONF } from './conf';
 import Base from './base';
 import Task from './task';
-import AsyncResult from './result';
+import { AsyncResult } from './result';
 
 /**
  * create json string representing celery task message. used by Client.publish
@@ -18,7 +19,12 @@ import AsyncResult from './result';
  *
  * @returns {String} JSON serialized string of celery task message
  */
-export function createTaskMessage(id, taskName, args, kwargs) {
+export function createTaskMessage(
+  id: string, 
+  taskName: string, 
+  args: Array<any> | void, 
+  kwargs: object | void
+): string {
   const message = {
     id,
     task: taskName,
@@ -34,22 +40,23 @@ export default class Client extends Base {
    * Celery client
    * @extends {external:Base}
    * @constructor Client
-   * @param {object} conf configuration object of Celery Client. For more information, see Base#constructor.
+   * @param {CeleryConf} conf configuration object of Celery Client. For more information, see Base#constructor.
    */
   // eslint-disable-next-line no-useless-constructor
-  constructor(conf) {
+  constructor(conf: CeleryConf = DEFAULT_CELERY_CONF) {
     super(conf);
   }
 
   /**
    * createTask
    * @method Client#createTask
-   * @param {String} name for task name
+   * @param {string} name for task name
    * @returns {Task} task object
+   * 
    * @example
    * client.createTask('task.add').delay([1, 2])
    */
-  createTask(name) {
+  createTask(name: string): Task {
     return new Task(this, name);
   }
 
@@ -64,7 +71,11 @@ export default class Client extends Base {
    * @example
    * client.delay('tasks.add', [1, 2])
    */
-  delay(name, args, kwargs) {
+  delay(
+    name: string, 
+    args: Array<any>, 
+    kwargs: object | void
+  ): AsyncResult {
     const result = this.createTask(name).delay(args, kwargs);
 
     return result;
@@ -75,11 +86,15 @@ export default class Client extends Base {
    * @method Client#publish
    * @param {Task} task
    * @param {Array} args
-   * @param {Object} kwargs
+   * @param {object} kwargs
    * @returns {AsyncResult} async result object for get result of delayed task
    */
-  publish(task, args, kwargs) {
-    const taskId = uuid.v4();
+  publish(
+    task: Task, 
+    args: Array<any>, 
+    kwargs: object
+  ): AsyncResult {
+    const taskId = v4();
     const result = new AsyncResult(taskId, this.backend);
 
     const message = createTaskMessage(taskId, task.name, args, kwargs);

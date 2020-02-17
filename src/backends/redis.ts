@@ -1,5 +1,6 @@
-import Redis from 'ioredis';
-import urllib from 'url';
+import * as Redis from 'ioredis';
+import * as urllib from 'url';
+import { CeleryBackend } from '.';
 
 /**
  * celery key preifx for redis result key
@@ -15,13 +16,13 @@ const keyPrefix = 'celery-task-meta-';
  * @private
  * @param {String} urlString
  */
-function redisOptsFromUrl(urlString) {
-  const redisOpts = {};
+function redisOptsFromUrl(urlString: string): Redis.RedisOptions {
+  const redisOpts = {} as Redis.RedisOptions;
   try {
     const redisUrl = urllib.parse(urlString);
-    redisOpts.port = redisUrl.port || 6379;
+    redisOpts.port = +redisUrl.port || 6379;
     redisOpts.host = redisUrl.hostname;
-    redisOpts.db = redisUrl.pathname ? redisUrl.pathname.split('/')[1] : 0;
+    redisOpts.db = redisUrl.pathname ? +redisUrl.pathname.split('/')[1] : 0;
     if (redisUrl.auth) {
       [, redisOpts.password] = redisUrl.auth.split(':');
     }
@@ -31,14 +32,19 @@ function redisOptsFromUrl(urlString) {
   return redisOpts;
 }
 
-export default class RedisBackend {
+/**
+ * @exports
+ */
+export default class RedisBackend implements CeleryBackend {
+  redis: Redis.Redis;
+
   /**
    * Redis backend class
    * @constructor RedisBackend
    * @param {string} url the connection string of redis
    * @param {object} opts the options object for redis connect of ioredis
    */
-  constructor(url, opts) {
+  constructor(url: string, opts: object) {
     this.redis = new Redis({
       ...redisOptsFromUrl(url),
       ...opts,
@@ -50,7 +56,7 @@ export default class RedisBackend {
    * @method RedisBackend#isReady
    * @returns {Promise} promises that continues if redis connected.
    */
-  isReady() {
+  isReady(): Promise<void> {
     return new Promise((resolve, reject) => {
       if (this.redis.status === 'ready') {
         resolve();
@@ -75,7 +81,7 @@ export default class RedisBackend {
    * @method RedisBackend#disconnect
    * @returns {Promise} promises that continues if redis disconnected.
    */
-  disconnect() {
+  disconnect(): Promise<string> {
     return this.redis.quit();
   }
 
@@ -85,7 +91,11 @@ export default class RedisBackend {
    * @param {*} result
    * @param {String} state
    */
-  storeResult(taskId, result, state) {
+  storeResult(
+    taskId: string, 
+    result: any, 
+    state: string
+  ): Promise<["OK", number]> {
     return this.set(`${keyPrefix}${taskId}`, JSON.stringify({
       status: state,
       result,
@@ -101,7 +111,7 @@ export default class RedisBackend {
    * @param {String} taskId
    * @returns {Promise}
    */
-  getTaskMeta(taskId) {
+  getTaskMeta(taskId: string): Promise<any> {
     return this.get(`${keyPrefix}${taskId}`)
       .then(msg => JSON.parse(msg));
   }
@@ -113,7 +123,10 @@ export default class RedisBackend {
    * @param {String} value
    * @returns {Promise}
    */
-  set(key, value) {
+  set(
+    key: string, 
+    value: string
+  ): Promise<["OK", number]> {
     return Promise.all([
       this.redis.setex(key, 86400, value),
       this.redis.publish(key, value), // publish command for subscribe
@@ -126,7 +139,7 @@ export default class RedisBackend {
    * @param {String} key
    * @return {Promise}
    */
-  get(key) {
+  get(key: string): Promise<string> {
     return this.redis.get(key);
   }
 }

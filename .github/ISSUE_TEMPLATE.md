@@ -25,6 +25,7 @@
   - Version: 0.0.0
   - OS: [Windows Server 2016 | OS X | linux]
   - Language: [TypeScript X.X | ES6/7 | ES5]
+  - Runtime: [deno | node]
 
 
 * **Other information** (e.g. detailed explanation, stacktraces, related issues, suggestions how to fix, links for us to have context, eg. stackoverflow, gitter, etc)

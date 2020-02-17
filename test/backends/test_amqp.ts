@@ -1,6 +1,6 @@
 
 import { assert } from 'chai';
-import uuid from 'uuid';
+import { v4 } from 'uuid';
 import AMQPBackend from '../../src/backends/amqp';
 
 const amqpUrl = 'amqp://test:password@localhost';
@@ -9,8 +9,8 @@ const amqpUrl = 'amqp://test:password@localhost';
 describe('amqp backend', () => {
   describe('stroeResult', () => {
     it('just store', (done) => {
-      const taskId = uuid.v4();
-      const backend = new AMQPBackend(amqpUrl);
+      const taskId = v4();
+      const backend = new AMQPBackend(amqpUrl, {});
 
       backend.storeResult(taskId, 3, 'SUCCESS')
         .then((result) => {
@@ -23,8 +23,8 @@ describe('amqp backend', () => {
 
   describe('getTaskMeta', () => {
     it('getTaskMeta with store', (done) => {
-      const taskId = uuid.v4();
-      const backend = new AMQPBackend(amqpUrl);
+      const taskId = v4();
+      const backend = new AMQPBackend(amqpUrl, {});
 
       backend.storeResult(taskId, 3, 'SUCCESS')
         .then(() => {

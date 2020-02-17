@@ -4,9 +4,6 @@
 Celery client / worker written in node.js  
 This project focuses on implementing task queue using celery protocol in node.js influenced by [node-celery](https://github.com/mher/node-celery)
 
-[api reference](https://actumn.github.io/celery.node/docs/api)  
-[internal refreence](https://actumn.github.io/celery.node/docs/internal)  
-  
 ## What is a Task queue and Celery?
 ### Task Queue
 Task queue is a mechanism to distribute or dispatch "tasks" or "jobs" across "workers" or "machines" for executing them asynchronously.

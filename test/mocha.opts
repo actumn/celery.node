@@ -1,4 +1,4 @@
 -R spec
 --timeout 10000
 test/**/test_*.ts
---compilers js:@babel/register
+--compilers ts-node/register
