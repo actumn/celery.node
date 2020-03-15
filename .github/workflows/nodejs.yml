@@ -14,6 +14,17 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    services:
+      redis:
+        image: redis
+        ports:
+        - 6379:6379
+        options: --entrypoint redis-server
+      rabbitmq:
+        image: rabbitmq
+        ports:
+        - 5672:5672
+
     strategy:
       matrix:
         node-version: [10.x, 12.x]
@@ -25,7 +36,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
-    - run: npm run build --if-present
+    - run: npm run lint
+    - run: npm run dist
     - run: npm test
       env:
         CI: true
