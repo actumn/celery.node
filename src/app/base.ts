@@ -54,6 +54,6 @@ export default class Base {
    * @returns {Promise} promises that continues if backend and broker disconnected.
    */
   public disconnect(): Promise<any> {
-    return Promise.all([this.backend.disconnect(), this.broker.disconnect()]);
+    return this.broker.disconnect().then(() => this.backend.disconnect());
   }
 }

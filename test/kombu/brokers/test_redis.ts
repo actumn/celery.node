@@ -1,9 +1,21 @@
+import * as Redis from "ioredis";
 import { assert } from "chai";
 import RedisBroker from "../../../src/kombu/brokers/redis";
 
-const redisUrl = "redis://localhost:6379/1";
+const redisUrl = "redis://localhost:6379/0";
 
 describe("redis broker", () => {
+  let client: Redis.Redis;
+
+  beforeEach(() => {
+    client = new Redis();
+    client.flushdb();
+  });
+
+  afterEach(() => {
+    client.quit();
+  });
+
   describe("publish", () => {
     it("just publish", done => {
       const broker = new RedisBroker(redisUrl, {});

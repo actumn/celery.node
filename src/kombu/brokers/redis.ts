@@ -26,6 +26,8 @@ function redisOptsFromUrl(urlString): Redis.RedisOptions {
 
 export default class RedisBroker implements CeleryBroker {
   redis: Redis.Redis;
+  channels = [];
+  closing = false;
 
   /**
    * Redis broker class
@@ -71,7 +73,8 @@ export default class RedisBroker implements CeleryBroker {
    * @returns {Promise} promises that continues if redis disconnected.
    */
   public disconnect(): Promise<string> {
-    return this.redis.quit();
+    this.closing = true;
+    return Promise.all(this.channels).then(() => this.redis.quit());
   }
 
   /**
@@ -111,47 +114,56 @@ export default class RedisBroker implements CeleryBroker {
    */
   public subscribe(queue: string, callback: Function): Promise<any[]> {
     const promiseCount = 1;
-    const promises = [];
 
     return this.isReady().then(() => {
       for (let index = 0; index < promiseCount; index += 1) {
-        promises.push(
-          new Promise(() => this.consumeTasks(index, queue, callback))
+        this.channels.push(
+          new Promise((resolve) => this.consumeTasks(index, resolve, queue, callback))
         );
       }
 
-      return Promise.all(promises);
+      return Promise.all(this.channels);
     });
   }
 
   /**
    * @private
    * @param {number} index
+   * @param {Fucntion} resolve
    * @param {string} queue
    * @param {Function} callback
    */
-  private consumeTasks(index: number, queue: string, callback: Function): void {
-    process.nextTick(() => this.consumeTaskOnNextTick(index, queue, callback));
+  private consumeTasks(index: number, resolve: Function, queue: string, callback: Function): void {
+    process.nextTick(() => this.consumeTaskOnNextTick(index, resolve, queue, callback));
   }
 
   /**
    * @private
    * @param {number} index
+   * @param {Function} resolve
    * @param {String} queue
    * @param {Function} callback
    * @returns {Promise}
    */
   private consumeTaskOnNextTick(
     index: number,
+    resolve: Function,
     queue: string,
     callback: Function
   ): Promise<void> {
+    if (this.closing) {
+      resolve();
+      return;
+    }
+
     return this.basicConsume(queue)
       .then(body => {
-        callback(body);
+        if (body) {
+          callback(body);
+        }
         Promise.resolve();
       })
-      .then(() => this.consumeTasks(index, queue, callback))
+      .then(() => this.consumeTasks(index, resolve, queue, callback))
       .catch(err => console.error(err));
   }
 
@@ -161,7 +173,12 @@ export default class RedisBroker implements CeleryBroker {
    * @return {Promise}
    */
   private basicConsume(queue: string): Promise<any> {
-    return this.redis.brpop(queue, "5").then(([queue, item]) => {
+    return this.redis.brpop(queue, "5").then((result) => {
+      if (!result) {
+        return null;
+      }
+
+      const [queue, item] = result;
       const task = JSON.parse(item);
 
       // now supports only application/json of content-type
