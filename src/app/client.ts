@@ -22,8 +22,8 @@ import { AsyncResult } from './result';
 export function createTaskMessage(
   id: string, 
   taskName: string, 
-  args: Array<any> | void, 
-  kwargs: object | void
+  args?: Array<any>, 
+  kwargs?: object
 ): string {
   const message = {
     id,
@@ -56,7 +56,7 @@ export default class Client extends Base {
    * @example
    * client.createTask('task.add').delay([1, 2])
    */
-  createTask(name: string): Task {
+  public createTask(name: string): Task {
     return new Task(this, name);
   }
 
@@ -71,10 +71,10 @@ export default class Client extends Base {
    * @example
    * client.delay('tasks.add', [1, 2])
    */
-  delay(
+  public delay(
     name: string, 
     args: Array<any>, 
-    kwargs: object | void
+    kwargs?: object
   ): AsyncResult {
     const result = this.createTask(name).delay(args, kwargs);
 
@@ -89,7 +89,7 @@ export default class Client extends Base {
    * @param {object} kwargs
    * @returns {AsyncResult} async result object for get result of delayed task
    */
-  publish(
+  public publish(
     task: Task, 
     args: Array<any>, 
     kwargs: object

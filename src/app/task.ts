@@ -25,9 +25,9 @@ export default class Task {
    * @example
    * client.createTask('task.add').delay([1, 2])
    */
-  delay(
+  public delay(
     args: Array<any>, 
-    kwargs: object | void
+    kwargs?: object
   ): AsyncResult {
     if (args && !Array.isArray(args)) {
       throw new Error('args is not array');

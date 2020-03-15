@@ -7,14 +7,14 @@ import { CeleryBackend } from '.';
  * @private
  * @constant
  *
- * @type {String}
+ * @type {string}
  */
 const keyPrefix = 'celery-task-meta-';
 
 /**
  * codes from bull: https://github.com/OptimalBits/bull/blob/129c6e108ce67ca343c8532161d06742d92b651c/lib/queue.js#L296-L310
  * @private
- * @param {String} urlString
+ * @param {string} urlString
  */
 function redisOptsFromUrl(urlString: string): Redis.RedisOptions {
   const redisOpts = {} as Redis.RedisOptions;
@@ -56,7 +56,7 @@ export default class RedisBackend implements CeleryBackend {
    * @method RedisBackend#isReady
    * @returns {Promise} promises that continues if redis connected.
    */
-  isReady(): Promise<void> {
+  public isReady(): Promise<void> {
     return new Promise((resolve, reject) => {
       if (this.redis.status === 'ready') {
         resolve();
@@ -81,17 +81,17 @@ export default class RedisBackend implements CeleryBackend {
    * @method RedisBackend#disconnect
    * @returns {Promise} promises that continues if redis disconnected.
    */
-  disconnect(): Promise<string> {
+  public disconnect(): Promise<string> {
     return this.redis.quit();
   }
 
   /**
    * @method RedisBackend#storeResult
-   * @param {String} taskId
+   * @param {string} taskId
    * @param {*} result
-   * @param {String} state
+   * @param {string} state
    */
-  storeResult(
+  public storeResult(
     taskId: string, 
     result: any, 
     state: string
@@ -108,10 +108,10 @@ export default class RedisBackend implements CeleryBackend {
 
   /**
    * @method RedisBackend#getTaskMeta
-   * @param {String} taskId
+   * @param {string} taskId
    * @returns {Promise}
    */
-  getTaskMeta(taskId: string): Promise<any> {
+  public getTaskMeta(taskId: string): Promise<any> {
     return this.get(`${keyPrefix}${taskId}`)
       .then(msg => JSON.parse(msg));
   }
@@ -123,7 +123,7 @@ export default class RedisBackend implements CeleryBackend {
    * @param {String} value
    * @returns {Promise}
    */
-  set(
+  private set(
     key: string, 
     value: string
   ): Promise<["OK", number]> {
@@ -136,10 +136,10 @@ export default class RedisBackend implements CeleryBackend {
   /**
    * @method RedisBackend#get
    * @private
-   * @param {String} key
+   * @param {string} key
    * @return {Promise}
    */
-  get(key: string): Promise<string> {
+  private get(key: string): Promise<string> {
     return this.redis.get(key);
   }
 }

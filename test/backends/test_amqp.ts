@@ -3,7 +3,7 @@ import { assert } from 'chai';
 import { v4 } from 'uuid';
 import AMQPBackend from '../../src/backends/amqp';
 
-const amqpUrl = 'amqp://test:password@localhost';
+const amqpUrl = 'amqp://';
 
 
 describe('amqp backend', () => {

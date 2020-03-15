@@ -26,7 +26,7 @@ export default class Worker extends Base {
    * worker.register('tasks.add', (a, b) => a + b);
    * worker.start();
    */
-  register(
+  public register(
     name: string, 
     handler: Function
   ): void {
@@ -39,7 +39,7 @@ export default class Worker extends Base {
 
     this.handlers[name] = function registHandler(...args: any[]) {
       try {
-        return Promise.resolve(handler(args));
+        return Promise.resolve(handler(...args));
       } catch (err) {
         return Promise.reject(err);
       }
@@ -53,7 +53,7 @@ export default class Worker extends Base {
    * worker.register('tasks.add', (a, b) => a + b);
    * worker.start();
    */
-  start(): Promise<any> {
+  public start(): Promise<any> {
     console.info('celery.node worker start...');
     console.info(`registed task: ${Object.keys(this.handlers)}`);
     return this.run().catch(err => console.error(err));
@@ -65,7 +65,7 @@ export default class Worker extends Base {
    *
    * @returns {Promise}
    */
-  run(): Promise<any> {
+  private run(): Promise<any> {
     return this.isReady()
       .then(() => this.processTasks());
   }
@@ -76,7 +76,7 @@ export default class Worker extends Base {
    *
    * @returns function results
    */
-  processTasks(): Promise<any> {
+  private processTasks(): Promise<any> {
     const consumer = this.getConsumer('celery');
     return consumer();
   }
@@ -87,7 +87,7 @@ export default class Worker extends Base {
    *
    * @param {String} queue queue name for task route
    */
-  getConsumer(queue: string): Function {
+  private getConsumer(queue: string): Function {
     const receiveCallback = (body) => {
       if (!body) {
         return Promise.resolve();
@@ -116,7 +116,7 @@ export default class Worker extends Base {
    * @todo implement here
    */
   // eslint-disable-next-line class-methods-use-this
-  stop() {
+  public stop() {
     throw new Error('not implemented yet');
   }
 }

@@ -45,7 +45,7 @@ export default class RedisBroker implements CeleryBroker {
    * @method RedisBroker#isReady
    * @returns {Promise} promises that continues if redis connected.
    */
-  isReady(): Promise<void> {
+  public isReady(): Promise<void> {
     return new Promise((resolve, reject) => {
       if (this.redis.status === 'ready') {
         resolve();
@@ -70,7 +70,7 @@ export default class RedisBroker implements CeleryBroker {
    * @method RedisBroker#disconnect
    * @returns {Promise} promises that continues if redis disconnected.
    */
-  disconnect(): Promise<string> {
+  public disconnect(): Promise<string> {
     return this.redis.quit();
   }
 
@@ -80,7 +80,7 @@ export default class RedisBroker implements CeleryBroker {
    * @param {String} message
    * @returns {Promise}
    */
-  publish(queue: string, message: string): Promise<number> {
+  public publish(queue: string, message: string): Promise<number> {
     return this.redis.lpush(queue, JSON.stringify({
       body: Buffer.from(message).toString('base64'),
       headers: {},
@@ -102,11 +102,11 @@ export default class RedisBroker implements CeleryBroker {
 
   /**
    * @method RedisBroker#subscribe
-   * @param {String} queue
+   * @param {string} queue
    * @param {Function} callback
    * @returns {Promise}
    */
-  subscribe(queue, callback): Promise<any[]> {
+  public subscribe(queue:string, callback: Function): Promise<any[]> {
     const promiseCount = 1;
     const promises = [];
 
@@ -124,22 +124,30 @@ export default class RedisBroker implements CeleryBroker {
 
   /**
    * @private
-   * @param {Number} index
-   * @param {String} queue
+   * @param {number} index
+   * @param {string} queue
    * @param {Function} callback
    */
-  consumeTasks(index, queue, callback): void {
+  private consumeTasks(
+    index: number, 
+    queue: string, 
+    callback: Function)
+  : void {
     process.nextTick(() => this.consumeTaskOnNextTick(index, queue, callback));
   }
 
   /**
    * @private
-   * @param {Number} index
+   * @param {number} index
    * @param {String} queue
    * @param {Function} callback
    * @returns {Promise}
    */
-  consumeTaskOnNextTick(index, queue, callback): Promise<void> {
+  private consumeTaskOnNextTick(
+    index: number, 
+    queue: string, 
+    callback: Function
+  ): Promise<void> {
     return this.basicConsume(queue)
       .then((body) => {
         callback(body);
@@ -151,37 +159,30 @@ export default class RedisBroker implements CeleryBroker {
 
   /**
    * @private
-   * @param {String} queue
+   * @param {string} queue
    * @return {Promise}
    */
-  basicConsume(queue): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.redis.brpop(queue, '5')
-        .then(([err, item]) => {
-          if (err) {
-            reject(err);
-          } else if (item) {
-            const task = JSON.parse(item[1]);
-            // now supports only application/json of content-type
-            if (task['content-type'] !== 'application/json') {
-              throw new Error(`unsupported content type ${task['content-type']}`);
-            }
-            // now supports only base64 of body_encoding
-            if (task.properties.body_encoding !== 'base64') {
-              throw new Error(`unsupported body encoding ${task.properties.body_encoding}`);
-            }
-            // now supports only utf-9 of content-encoding
-            if (task['content-encoding'] !== 'utf-8') {
-              throw new Error(`unsupported content encoding ${task['content-encoding']}`);
-            }
-  
-            const body = Buffer.from(task.body, 'base64').toString('utf-8');
-  
-            resolve(JSON.parse(body));
-          } else {
-            resolve(null);
-          }
-        });
-    });
+  private basicConsume(queue: string): Promise<any> {
+    return this.redis.brpop(queue, '5')
+      .then(([queue, item]) => {
+        const task = JSON.parse(item);
+
+        // now supports only application/json of content-type
+        if (task['content-type'] !== 'application/json') {
+          throw new Error(`unsupported content type ${task['content-type']}`);
+        }
+        // now supports only base64 of body_encoding
+        if (task.properties.body_encoding !== 'base64') {
+          throw new Error(`unsupported body encoding ${task.properties.body_encoding}`);
+        }
+        // now supports only utf-9 of content-encoding
+        if (task['content-encoding'] !== 'utf-8') {
+          throw new Error(`unsupported content encoding ${task['content-encoding']}`);
+        }
+
+        const body = Buffer.from(task.body, 'base64').toString('utf-8');
+
+        return JSON.parse(body);
+      });
   }
 }

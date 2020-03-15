@@ -12,7 +12,9 @@ describe('node celery worker with redis broker', () => {
   describe('worker running', () => {
     it('tasks.add', (done) => {
       const worker = new Worker(celeryOpts);
-      worker.register('tasks.add', (a, b) => a + b);
+      worker.register('tasks.add', (a, b) => {
+        return a + b
+      });
       worker.start();
 
       const client = new Client(celeryOpts);
@@ -64,7 +66,7 @@ describe('node celery worker with redis broker', () => {
       setTimeout(() => {
         result.get()
           .then((data) => {
-            assert.equal(data.result, 3);
+            assert.equal(data.result, 10);
 
             Promise.all([
               worker.disconnect(),
@@ -78,8 +80,8 @@ describe('node celery worker with redis broker', () => {
 
 describe('node celery worker with amqp broker', () => {
   const celeryOpts = {
-    CELERY_BROKER: 'amqp://test:password@localhost',
-    CELERY_BACKEND: 'amqp://test:password@localhost',
+    CELERY_BROKER: 'amqp://',
+    CELERY_BACKEND: 'amqp://',
   } as CeleryConf;
 
   describe('worker running with amqp broker', () => {

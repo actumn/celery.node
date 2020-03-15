@@ -27,7 +27,7 @@ export default class AMQPBroker implements CeleryBroker {
    * @method AMQPBroker#isReady
    * @returns {Promise} promises that continues if amqp connected.
    */
-  isReady(): Promise<amqplib.Connection> {
+  public isReady(): Promise<amqplib.Connection> {
     return this.connect;
   }
 
@@ -35,7 +35,7 @@ export default class AMQPBroker implements CeleryBroker {
    * @method AMQPBroker#disconnect
    * @returns {Promise} promises that continues if amqp disconnected.
    */
-  disconnect(): Promise<void> {
+  public disconnect(): Promise<void> {
     return this.connect.then(conn => conn.close());
   }
 
@@ -45,7 +45,7 @@ export default class AMQPBroker implements CeleryBroker {
    * @param {String} message
    * @returns {Promise}
    */
-  publish(queue: string, message: string): Promise<boolean> {
+  public publish(queue: string, message: string): Promise<boolean> {
     return this.channel
       .then(ch => ch.assertQueue(queue, {
         durable: true,
@@ -66,7 +66,7 @@ export default class AMQPBroker implements CeleryBroker {
    * @param {Function} callback
    * @returns {Promise}
    */
-  subscribe(queue: string, callback: Function): Promise<amqplib.Replies.Consume> {
+  public subscribe(queue: string, callback: Function): Promise<amqplib.Replies.Consume> {
     return this.channel
       .then(ch => ch.assertQueue(queue, {
         durable: true,

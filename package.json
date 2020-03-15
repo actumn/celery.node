@@ -2,7 +2,8 @@
   "name": "celery-node",
   "version": "0.0.1",
   "description": "celery written in nodejs",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "lint": "./node_modules/.bin/eslint src test",
     "dist": "tsc",

@@ -37,7 +37,7 @@ export default class Base {
    *
    * @returns {Promise} promise that continues if backend and broker connected.
    */
-  isReady(): Promise<any> {
+  public isReady(): Promise<any> {
     return Promise.all([
       this.backend.isReady(),
       this.broker.isReady(),
@@ -50,7 +50,7 @@ export default class Base {
    *
    * @returns {Promise} promises that continues if backend and broker disconnected.
    */
-  disconnect(): Promise<any> {
+  public disconnect(): Promise<any> {
     return Promise.all([
       this.backend.disconnect(),
       this.broker.disconnect(),

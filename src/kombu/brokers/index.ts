@@ -13,8 +13,6 @@ export interface CeleryBroker {
  * Support broker protocols of celery.node.
  * @private
  * @constant
- *
- * @type {Array}
  */
 const supportedProtocols = ['redis', 'amqp'];
 

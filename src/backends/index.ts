@@ -13,8 +13,6 @@ export interface CeleryBackend {
  * Support backend protocols of celery.node.
  * @private
  * @constant
- *
- * @type {Array}
  */
 const supportedProtocols = ['redis', 'amqp'];
 
@@ -22,7 +20,7 @@ const supportedProtocols = ['redis', 'amqp'];
  * takes url string and after parsing scheme of url, returns protocol.
  *
  * @private
- * @param {String} uri 
+ * @param {string} uri 
  * @returns {String} protocol string.
  * @throws {Error} when url has unsupported protocols
  */
@@ -36,7 +34,7 @@ function getProtocol(uri: string): string {
 
 /**
  * 
- * @param {String} CELERY_BACKEND 
+ * @param {string} CELERY_BACKEND 
  * @param {object} CELERY_BACKEND_OPTIONS 
  * @returns {CeleryBackend}
  */
@@ -50,7 +48,6 @@ export function newCeleryBackend(
   }
 
   if (brokerProtocol === 'amqp') {
-    console.log(CELERY_BACKEND)
     return new AMQPBackend(CELERY_BACKEND, CELERY_BACKEND_OPTIONS);
   }
 

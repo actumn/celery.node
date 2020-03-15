@@ -22,22 +22,13 @@ describe('redis broker', () => {
       const broker = new RedisBroker(redisUrl, {});
 
       broker.publish('subscribe', '{ "a": 1 }')
-        .then(() => broker.subscribe('subscribe', (body) => {
-          assert.deepEqual(body, { a: 1 });
-          broker.disconnect()
-            .then(() => done());
-        }));
-    });
-
-    it('with empty queue', (done) => {
-      const broker = new RedisBroker(redisUrl, {});
-
-      broker.subscribe('empty', (body) => {
-        assert.equal(body, null);
-
-        broker.disconnect()
-          .then(() => done());
-      });
+        .then((reply) => {
+          broker.subscribe('subscribe', (body) => {
+            assert.deepEqual(body, { a: 1 });
+            broker.disconnect()
+              .then(() => done());
+          })
+        });
     });
   });
 });

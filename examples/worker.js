@@ -1,5 +1,5 @@
 'use strict'
-const celery = require('..');
+const celery = require('../dist');
 
 const worker = celery.createWorker({
   CELERY_BROKER: 'amqp://',

@@ -28,7 +28,7 @@ export default class AMQPBackend implements CeleryBackend {
    * @method AMQPBackend#isReady
    * @returns {Promise} promises that continues if amqp connected.
    */
-  isReady(): Promise<amqplib.Connection> {
+  public isReady(): Promise<amqplib.Connection> {
     return this.connect;
   }
 
@@ -36,7 +36,7 @@ export default class AMQPBackend implements CeleryBackend {
    * @method AMQPBackend#disconnect
    * @returns {Promise} promises that continues if amqp disconnected.
    */
-  disconnect(): Promise<void> {
+  public disconnect(): Promise<void> {
     return this.connect.then(conn => conn.close());
   }
 
@@ -48,7 +48,7 @@ export default class AMQPBackend implements CeleryBackend {
    * @param {String} state
    * @returns {Promise}
    */
-  storeResult(
+  public storeResult(
     taskId: string, 
     result: any, 
     state: string
@@ -83,7 +83,7 @@ export default class AMQPBackend implements CeleryBackend {
    * @param {String} taskId
    * @returns {Promise}
    */
-  getTaskMeta(taskId: string): Promise<any> {
+  public getTaskMeta(taskId: string): Promise<any> {
     const queue = taskId.replace(/-/g, '');
     return this.channel
       .then(ch => ch.assertQueue(queue, {
