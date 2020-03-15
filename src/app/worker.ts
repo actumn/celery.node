@@ -1,5 +1,5 @@
-import { CeleryConf, DEFAULT_CELERY_CONF } from './conf';
-import Base from './base';
+import { CeleryConf, DEFAULT_CELERY_CONF } from "./conf";
+import Base from "./base";
 
 export default class Worker extends Base {
   handlers: object;
@@ -21,20 +21,17 @@ export default class Worker extends Base {
    * @method Worker#register
    * @param {String} name the name of task for dispatching.
    * @param {Function} handler the function for task handling
-   * 
+   *
    * @example
    * worker.register('tasks.add', (a, b) => a + b);
    * worker.start();
    */
-  public register(
-    name: string, 
-    handler: Function
-  ): void {
+  public register(name: string, handler: Function): void {
     if (!handler) {
-      throw new Error('Undefined handler');
+      throw new Error("Undefined handler");
     }
     if (this.handlers[name]) {
-      throw new Error('Already handler setted');
+      throw new Error("Already handler setted");
     }
 
     this.handlers[name] = function registHandler(...args: any[]) {
@@ -54,7 +51,7 @@ export default class Worker extends Base {
    * worker.start();
    */
   public start(): Promise<any> {
-    console.info('celery.node worker start...');
+    console.info("celery.node worker start...");
     console.info(`registed task: ${Object.keys(this.handlers)}`);
     return this.run().catch(err => console.error(err));
   }
@@ -66,8 +63,7 @@ export default class Worker extends Base {
    * @returns {Promise}
    */
   private run(): Promise<any> {
-    return this.isReady()
-      .then(() => this.processTasks());
+    return this.isReady().then(() => this.processTasks());
   }
 
   /**
@@ -77,7 +73,7 @@ export default class Worker extends Base {
    * @returns function results
    */
   private processTasks(): Promise<any> {
-    const consumer = this.getConsumer('celery');
+    const consumer = this.getConsumer("celery");
     return consumer();
   }
 
@@ -88,7 +84,7 @@ export default class Worker extends Base {
    * @param {String} queue queue name for task route
    */
   private getConsumer(queue: string): Function {
-    const receiveCallback = (body) => {
+    const receiveCallback = body => {
       if (!body) {
         return Promise.resolve();
       }
@@ -98,11 +94,15 @@ export default class Worker extends Base {
         throw new Error(`Missing process handler for task ${body.task}`);
       }
 
-      console.info(`celery.node receive task: ${body.task}, args: ${body.args}, kwargs: ${JSON.stringify(body.kwargs)}`);
+      console.info(
+        `celery.node receive task: ${body.task}, args: ${
+          body.args
+        }, kwargs: ${JSON.stringify(body.kwargs)}`
+      );
       const taskPromise = handler(...body.args, body.kwargs);
       return taskPromise
-        .then((result) => {
-          this.backend.storeResult(body.id, result, 'SUCCESS');
+        .then(result => {
+          this.backend.storeResult(body.id, result, "SUCCESS");
         })
         .then(() => Promise.resolve());
     };
@@ -117,6 +117,6 @@ export default class Worker extends Base {
    */
   // eslint-disable-next-line class-methods-use-this
   public stop() {
-    throw new Error('not implemented yet');
+    throw new Error("not implemented yet");
   }
 }

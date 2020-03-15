@@ -24,8 +24,9 @@ export class AsyncResult {
   get(): Promise<AsyncResult> {
     return new Promise((resolve, reject) => {
       if (!this.result) {
-        this.backend.getTaskMeta(this.taskId)
-          .then((msg) => {
+        this.backend
+          .getTaskMeta(this.taskId)
+          .then(msg => {
             this.result = msg;
             resolve(this.result);
           })

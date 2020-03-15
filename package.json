@@ -5,7 +5,9 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "lint": "./node_modules/.bin/eslint src test",
+    "lint": "./node_modules/.bin/eslint src test --ext .js,.ts",
+    "format": "prettier --write \"{,!(node_modules)/**/}*.{js,ts}\"",
+    "format-check": "prettier --check \"{,!(node_modules)/**/}*.{js,ts}\"",
     "dist": "tsc",
     "test": "./node_modules/.bin/mocha"
   },
@@ -37,12 +39,15 @@
     "@babel/register": "^7.8.3",
     "@types/chai": "^4.2.9",
     "@types/mocha": "^7.0.1",
+    "@typescript-eslint/eslint-plugin": "^2.23.0",
+    "@typescript-eslint/parser": "^2.23.0",
     "chai": "^4.2.0",
     "eslint": "^5.16.0",
-    "eslint-config-airbnb-base": "^13.2.0",
+    "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-import": "^2.20.0",
     "eslint-plugin-mocha": "^5.3.0",
     "mocha": "^5.2.0",
+    "prettier": "^1.19.1",
     "sinon": "^7.2.2",
     "ts-node": "^8.6.2",
     "typescript": "^3.7.2"

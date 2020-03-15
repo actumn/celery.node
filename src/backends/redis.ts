@@ -1,6 +1,6 @@
-import * as Redis from 'ioredis';
-import * as urllib from 'url';
-import { CeleryBackend } from '.';
+import * as Redis from "ioredis";
+import * as urllib from "url";
+import { CeleryBackend } from ".";
 
 /**
  * celery key preifx for redis result key
@@ -9,7 +9,7 @@ import { CeleryBackend } from '.';
  *
  * @type {string}
  */
-const keyPrefix = 'celery-task-meta-';
+const keyPrefix = "celery-task-meta-";
 
 /**
  * codes from bull: https://github.com/OptimalBits/bull/blob/129c6e108ce67ca343c8532161d06742d92b651c/lib/queue.js#L296-L310
@@ -22,9 +22,9 @@ function redisOptsFromUrl(urlString: string): Redis.RedisOptions {
     const redisUrl = urllib.parse(urlString);
     redisOpts.port = +redisUrl.port || 6379;
     redisOpts.host = redisUrl.hostname;
-    redisOpts.db = redisUrl.pathname ? +redisUrl.pathname.split('/')[1] : 0;
+    redisOpts.db = redisUrl.pathname ? +redisUrl.pathname.split("/")[1] : 0;
     if (redisUrl.auth) {
-      [, redisOpts.password] = redisUrl.auth.split(':');
+      [, redisOpts.password] = redisUrl.auth.split(":");
     }
   } catch (e) {
     throw new Error(e.message);
@@ -47,7 +47,7 @@ export default class RedisBackend implements CeleryBackend {
   constructor(url: string, opts: object) {
     this.redis = new Redis({
       ...redisOptsFromUrl(url),
-      ...opts,
+      ...opts
     });
   }
 
@@ -58,21 +58,21 @@ export default class RedisBackend implements CeleryBackend {
    */
   public isReady(): Promise<void> {
     return new Promise((resolve, reject) => {
-      if (this.redis.status === 'ready') {
+      if (this.redis.status === "ready") {
         resolve();
       } else {
-        let handleError;
+        let handleError; // eslint-disable-line prefer-const
         const handleReady = () => {
-          this.redis.removeListener('error', handleError);
+          this.redis.removeListener("error", handleError);
           resolve();
         };
-        handleError = (err) => {
-          this.redis.removeListener('ready', handleReady);
+        handleError = err => {
+          this.redis.removeListener("ready", handleReady);
           reject(err);
         };
 
-        this.redis.once('ready', handleReady);
-        this.redis.once('error', handleError);
+        this.redis.once("ready", handleReady);
+        this.redis.once("error", handleError);
       }
     });
   }
@@ -92,18 +92,21 @@ export default class RedisBackend implements CeleryBackend {
    * @param {string} state
    */
   public storeResult(
-    taskId: string, 
-    result: any, 
+    taskId: string,
+    result: any,
     state: string
   ): Promise<["OK", number]> {
-    return this.set(`${keyPrefix}${taskId}`, JSON.stringify({
-      status: state,
-      result,
-      traceback: null,
-      children: [],
-      task_id: taskId,
-      date_done: new Date().toISOString(),
-    }));
+    return this.set(
+      `${keyPrefix}${taskId}`,
+      JSON.stringify({
+        status: state,
+        result,
+        traceback: null,
+        children: [],
+        task_id: taskId,
+        date_done: new Date().toISOString()
+      })
+    );
   }
 
   /**
@@ -112,8 +115,7 @@ export default class RedisBackend implements CeleryBackend {
    * @returns {Promise}
    */
   public getTaskMeta(taskId: string): Promise<any> {
-    return this.get(`${keyPrefix}${taskId}`)
-      .then(msg => JSON.parse(msg));
+    return this.get(`${keyPrefix}${taskId}`).then(msg => JSON.parse(msg));
   }
 
   /**
@@ -123,13 +125,10 @@ export default class RedisBackend implements CeleryBackend {
    * @param {String} value
    * @returns {Promise}
    */
-  private set(
-    key: string, 
-    value: string
-  ): Promise<["OK", number]> {
+  private set(key: string, value: string): Promise<["OK", number]> {
     return Promise.all([
       this.redis.setex(key, 86400, value),
-      this.redis.publish(key, value), // publish command for subscribe
+      this.redis.publish(key, value) // publish command for subscribe
     ]);
   }
 

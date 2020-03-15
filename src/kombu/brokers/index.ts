@@ -1,12 +1,12 @@
-import * as url from 'url';
-import RedisBroker from './redis';
-import AMQPBroker from './amqp';
+import * as url from "url";
+import RedisBroker from "./redis";
+import AMQPBroker from "./amqp";
 
 export interface CeleryBroker {
-  isReady: () => Promise<any>,
-  disconnect: () => Promise<any>,
-  publish: (queue: string, message: string) => Promise<any>,
-  subscribe: (queue: string, callback: Function) => Promise<any>,
+  isReady: () => Promise<any>;
+  disconnect: () => Promise<any>;
+  publish: (queue: string, message: string) => Promise<any>;
+  subscribe: (queue: string, callback: Function) => Promise<any>;
 }
 
 /**
@@ -14,13 +14,13 @@ export interface CeleryBroker {
  * @private
  * @constant
  */
-const supportedProtocols = ['redis', 'amqp'];
+const supportedProtocols = ["redis", "amqp"];
 
 /**
  * takes url string and after parsing scheme of url, returns protocol.
  *
  * @private
- * @param {String} uri 
+ * @param {String} uri
  * @returns {String} protocol string.
  * @throws {Error} when url has unsupported protocols
  */
@@ -33,21 +33,24 @@ function getProtocol(uri): string {
 }
 
 /**
- * 
- * @param {String} CELERY_BROKER 
- * @param {String} CELERY_BROKER_OPTIONS 
+ *
+ * @param {String} CELERY_BROKER
+ * @param {String} CELERY_BROKER_OPTIONS
  * @returns {CeleryBroker}
  */
-export function newCeleryBroker(CELERY_BROKER, CELERY_BROKER_OPTIONS): CeleryBroker {
+export function newCeleryBroker(
+  CELERY_BROKER,
+  CELERY_BROKER_OPTIONS
+): CeleryBroker {
   const brokerProtocol = getProtocol(CELERY_BROKER);
-  if (brokerProtocol === 'redis') {
+  if (brokerProtocol === "redis") {
     return new RedisBroker(CELERY_BROKER, CELERY_BROKER_OPTIONS);
   }
 
-  if (brokerProtocol === 'amqp') {
+  if (brokerProtocol === "amqp") {
     return new AMQPBroker(CELERY_BROKER, CELERY_BROKER_OPTIONS);
   }
 
   // do not reach here.
-  throw new Error('unsupprted celery broker');
+  throw new Error("unsupprted celery broker");
 }

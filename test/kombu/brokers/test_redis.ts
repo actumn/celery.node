@@ -1,34 +1,30 @@
-import { assert } from 'chai';
-import RedisBroker from '../../../src/kombu/brokers/redis';
+import { assert } from "chai";
+import RedisBroker from "../../../src/kombu/brokers/redis";
 
-const redisUrl = 'redis://localhost:6379/1';
+const redisUrl = "redis://localhost:6379/1";
 
-
-describe('redis broker', () => {
-  describe('publish', () => {
-    it('just publish', (done) => {
+describe("redis broker", () => {
+  describe("publish", () => {
+    it("just publish", done => {
       const broker = new RedisBroker(redisUrl, {});
 
-      broker.publish('publish', '{ "a": 1 }').then((reply) => {
+      broker.publish("publish", '{ "a": 1 }').then(reply => {
         assert.isNumber(reply);
-        broker.disconnect()
-          .then(() => done());
+        broker.disconnect().then(() => done());
       });
     });
   });
 
-  describe('subscribe', () => {
-    it('with publish', (done) => {
+  describe("subscribe", () => {
+    it("with publish", done => {
       const broker = new RedisBroker(redisUrl, {});
 
-      broker.publish('subscribe', '{ "a": 1 }')
-        .then((reply) => {
-          broker.subscribe('subscribe', (body) => {
-            assert.deepEqual(body, { a: 1 });
-            broker.disconnect()
-              .then(() => done());
-          })
+      broker.publish("subscribe", '{ "a": 1 }').then(reply => {
+        broker.subscribe("subscribe", body => {
+          assert.deepEqual(body, { a: 1 });
+          broker.disconnect().then(() => done());
         });
+      });
     });
   });
 });
