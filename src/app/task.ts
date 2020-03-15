@@ -1,20 +1,18 @@
+import Client from "./client";
+import { AsyncResult } from './result';
+
 export default class Task {
+  client: Client;
+  name: string;
+
   /**
    * Asynchronous Task
    * @constructor Task
    * @param {Client} clinet celery client instance
-   * @param {String} name celery task name
+   * @param {string} name celery task name
    */
-  constructor(client, name) {
-    /**
-     * Task client
-     * @member Task#client
-     */
+  constructor(client: Client, name: string) {
     this.client = client;
-    /**
-     * Task name
-     * @member Task#name
-     */
     this.name = name;
   }
 
@@ -23,10 +21,14 @@ export default class Task {
    * @param {Array} args
    * @param {object} kwargs
    * @returns {AsyncResult} the result of client.publish
+   * 
    * @example
    * client.createTask('task.add').delay([1, 2])
    */
-  delay(args, kwargs) {
+  public delay(
+    args: Array<any>, 
+    kwargs?: object
+  ): AsyncResult {
     if (args && !Array.isArray(args)) {
       throw new Error('args is not array');
     }

@@ -1,13 +1,18 @@
-import url from 'url';
+import * as url from 'url';
 import RedisBackend from './redis';
 import AMQPBackend from './amqp';
+
+export interface CeleryBackend {
+  isReady: () => Promise<any>,
+  disconnect: () => Promise<any>,
+  storeResult: (taskId: string, result: any, state: string) => Promise<any>,
+  getTaskMeta: (taskId: string) => Promise<any>,
+}
 
 /**
  * Support backend protocols of celery.node.
  * @private
  * @constant
- *
- * @type {Array}
  */
 const supportedProtocols = ['redis', 'amqp'];
 
@@ -15,11 +20,11 @@ const supportedProtocols = ['redis', 'amqp'];
  * takes url string and after parsing scheme of url, returns protocol.
  *
  * @private
- * @param {String} uri 
+ * @param {string} uri 
  * @returns {String} protocol string.
  * @throws {Error} when url has unsupported protocols
  */
-function getProtocol(uri) {
+function getProtocol(uri: string): string {
   const protocol = url.parse(uri).protocol.slice(0, -1);
   if (supportedProtocols.indexOf(protocol) === -1) {
     throw new Error(`Unsupported type: ${protocol}`);
@@ -29,18 +34,20 @@ function getProtocol(uri) {
 
 /**
  * 
- * @param {String} CELERY_BACKEND 
+ * @param {string} CELERY_BACKEND 
  * @param {object} CELERY_BACKEND_OPTIONS 
- * @returns {AMQPBackend | RedisBackend}
+ * @returns {CeleryBackend}
  */
-export default function CeleryBackend(CELERY_BACKEND, CELERY_BACKEND_OPTIONS) {
+export function newCeleryBackend(
+  CELERY_BACKEND: string, 
+  CELERY_BACKEND_OPTIONS: object
+): CeleryBackend {
   const brokerProtocol = getProtocol(CELERY_BACKEND);
   if (brokerProtocol === 'redis') {
     return new RedisBackend(CELERY_BACKEND, CELERY_BACKEND_OPTIONS);
   }
 
   if (brokerProtocol === 'amqp') {
-    console.log(CELERY_BACKEND)
     return new AMQPBackend(CELERY_BACKEND, CELERY_BACKEND_OPTIONS);
   }
 

@@ -1,21 +1,18 @@
+import { CeleryConf, DEFAULT_CELERY_CONF } from './conf';
 import Base from './base';
-import logger from '../logger';
 
 export default class Worker extends Base {
+  handlers: object;
+
   /**
    * Celery Worker
    * @extends {external:Base}
    * @constructor Worker
-   * @param {object} conf configuration object of Celery Worker. For more information, see Base#constructor.
+   * @param {CeleryConf} conf configuration object of Celery Worker. For more information, see Base#constructor.
    */
-  constructor(conf) {
+  constructor(conf: CeleryConf = DEFAULT_CELERY_CONF) {
     super(conf);
 
-    /**
-     * worker task handlers
-     * @member Worker#handlers
-     * @private
-     */
     this.handlers = {};
   }
 
@@ -24,11 +21,15 @@ export default class Worker extends Base {
    * @method Worker#register
    * @param {String} name the name of task for dispatching.
    * @param {Function} handler the function for task handling
+   * 
    * @example
    * worker.register('tasks.add', (a, b) => a + b);
    * worker.start();
    */
-  register(name, handler) {
+  public register(
+    name: string, 
+    handler: Function
+  ): void {
     if (!handler) {
       throw new Error('Undefined handler');
     }
@@ -36,9 +37,9 @@ export default class Worker extends Base {
       throw new Error('Already handler setted');
     }
 
-    this.handlers[name] = function registHandler() {
+    this.handlers[name] = function registHandler(...args: any[]) {
       try {
-        return Promise.resolve(handler(...arguments));
+        return Promise.resolve(handler(...args));
       } catch (err) {
         return Promise.reject(err);
       }
@@ -52,10 +53,10 @@ export default class Worker extends Base {
    * worker.register('tasks.add', (a, b) => a + b);
    * worker.start();
    */
-  start() {
-    logger.info('celery.node worker start...');
-    logger.info(`registed task: ${Object.keys(this.handlers)}`);
-    return this.run().catch(err => logger.error(err));
+  public start(): Promise<any> {
+    console.info('celery.node worker start...');
+    console.info(`registed task: ${Object.keys(this.handlers)}`);
+    return this.run().catch(err => console.error(err));
   }
 
   /**
@@ -64,7 +65,7 @@ export default class Worker extends Base {
    *
    * @returns {Promise}
    */
-  run() {
+  private run(): Promise<any> {
     return this.isReady()
       .then(() => this.processTasks());
   }
@@ -75,7 +76,7 @@ export default class Worker extends Base {
    *
    * @returns function results
    */
-  processTasks() {
+  private processTasks(): Promise<any> {
     const consumer = this.getConsumer('celery');
     return consumer();
   }
@@ -86,7 +87,7 @@ export default class Worker extends Base {
    *
    * @param {String} queue queue name for task route
    */
-  getConsumer(queue) {
+  private getConsumer(queue: string): Function {
     const receiveCallback = (body) => {
       if (!body) {
         return Promise.resolve();
@@ -97,7 +98,7 @@ export default class Worker extends Base {
         throw new Error(`Missing process handler for task ${body.task}`);
       }
 
-      logger.info(`celery.node receive task: ${body.task}, args: ${body.args}, kwargs: ${JSON.stringify(body.kwargs)}`);
+      console.info(`celery.node receive task: ${body.task}, args: ${body.args}, kwargs: ${JSON.stringify(body.kwargs)}`);
       const taskPromise = handler(...body.args, body.kwargs);
       return taskPromise
         .then((result) => {
@@ -115,7 +116,7 @@ export default class Worker extends Base {
    * @todo implement here
    */
   // eslint-disable-next-line class-methods-use-this
-  stop() {
+  public stop() {
     throw new Error('not implemented yet');
   }
 }

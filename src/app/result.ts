@@ -1,11 +1,17 @@
-export default class AsyncResult {
+import { CeleryBackend } from "../backends";
+
+export class AsyncResult {
+  taskId: string;
+  backend: CeleryBackend;
+  result: any;
+
   /**
    * Asynchronous Result
    * @constructor AsyncResult
-   * @param {String} taskId task id
-   * @param {AMQPBackend | RedisBackend} backend celery backend instance
+   * @param {string} taskId task id
+   * @param {CeleryBackend} backend celery backend instance
    */
-  constructor(taskId, backend) {
+  constructor(taskId: string, backend: CeleryBackend) {
     this.taskId = taskId;
     this.backend = backend;
     this.result = null;
@@ -15,7 +21,7 @@ export default class AsyncResult {
    * @method AsyncResult#get
    * @returns {Promise}
    */
-  get() {
+  get(): Promise<AsyncResult> {
     return new Promise((resolve, reject) => {
       if (!this.result) {
         this.backend.getTaskMeta(this.taskId)
