@@ -118,7 +118,9 @@ export default class RedisBroker implements CeleryBroker {
     return this.isReady().then(() => {
       for (let index = 0; index < promiseCount; index += 1) {
         this.channels.push(
-          new Promise((resolve) => this.consumeTasks(index, resolve, queue, callback))
+          new Promise(resolve =>
+            this.consumeTasks(index, resolve, queue, callback)
+          )
         );
       }
 
@@ -133,8 +135,15 @@ export default class RedisBroker implements CeleryBroker {
    * @param {string} queue
    * @param {Function} callback
    */
-  private consumeTasks(index: number, resolve: Function, queue: string, callback: Function): void {
-    process.nextTick(() => this.consumeTaskOnNextTick(index, resolve, queue, callback));
+  private consumeTasks(
+    index: number,
+    resolve: Function,
+    queue: string,
+    callback: Function
+  ): void {
+    process.nextTick(() =>
+      this.consumeTaskOnNextTick(index, resolve, queue, callback)
+    );
   }
 
   /**
@@ -173,7 +182,7 @@ export default class RedisBroker implements CeleryBroker {
    * @return {Promise}
    */
   private basicConsume(queue: string): Promise<any> {
-    return this.redis.brpop(queue, "5").then((result) => {
+    return this.redis.brpop(queue, "5").then(result => {
       if (!result) {
         return null;
       }

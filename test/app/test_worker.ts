@@ -17,12 +17,11 @@ describe("node celery worker with redis broker", () => {
     worker.register("tasks.add_mixed", (a, b, { c, d }) => a + b + c + d);
     worker.start();
   });
-  
+
   after(() => {
     worker.disconnect();
     const redis = new Redis();
-    redis.flushdb()
-    . then((() => redis.quit()));
+    redis.flushdb().then(() => redis.quit());
   });
 
   describe("worker running", () => {
@@ -35,7 +34,7 @@ describe("node celery worker with redis broker", () => {
         client.disconnect().then(() => {
           done();
         });
-      })
+      });
     });
 
     it("tasks.add_kwargs", done => {
@@ -45,9 +44,7 @@ describe("node celery worker with redis broker", () => {
       result.get().then(data => {
         assert.equal(data.result, 3);
 
-        client.disconnect().then(() =>
-          done()
-        );
+        client.disconnect().then(() => done());
       });
     });
 
@@ -58,9 +55,7 @@ describe("node celery worker with redis broker", () => {
       result.get().then(data => {
         assert.equal(data.result, 10);
 
-        client.disconnect().then(() =>
-          done()
-        );
+        client.disconnect().then(() => done());
       });
     });
   });
@@ -79,7 +74,7 @@ describe("node celery worker with amqp broker", () => {
     worker.register("tasks.add_mixed", (a, b, { c, d }) => a + b + c + d);
     worker.start();
   });
-  
+
   after(() => {
     worker.disconnect();
   });
@@ -92,9 +87,7 @@ describe("node celery worker with amqp broker", () => {
       result.get().then(data => {
         assert.equal(data.result, 3);
 
-        client.disconnect().then(() =>
-          done()
-        );
+        client.disconnect().then(() => done());
       });
     });
 
@@ -105,9 +98,7 @@ describe("node celery worker with amqp broker", () => {
       result.get().then(data => {
         assert.equal(data.result, 3);
 
-        client.disconnect().then(() =>
-          done()
-        );
+        client.disconnect().then(() => done());
       });
     });
 
@@ -118,9 +109,7 @@ describe("node celery worker with amqp broker", () => {
       result.get().then(data => {
         assert.equal(data.result, 10);
 
-        client.disconnect().then(() =>
-          done()
-        );
+        client.disconnect().then(() => done());
       });
     });
   });

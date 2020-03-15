@@ -35,12 +35,10 @@ export class AsyncResult {
           clearInterval(intervalId);
           resolve(null);
         }, timeout);
-      };
+      }
 
       intervalId = setInterval(() => {
-        this.backend
-        .getTaskMeta(this.taskId)
-        .then(msg => {
+        this.backend.getTaskMeta(this.taskId).then(msg => {
           if (msg) {
             if (timeout) {
               clearTimeout(timeoutId);
@@ -51,6 +49,6 @@ export class AsyncResult {
           }
         });
       }, 500);
-    })
+    });
   }
 }

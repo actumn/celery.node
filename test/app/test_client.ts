@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import * as Redis from 'ioredis';
+import * as Redis from "ioredis";
 import Client, { createTaskMessage } from "../../src/app/client";
 import Worker from "../../src/app/worker";
 import { CeleryConf } from "../../src/app/conf";
@@ -13,26 +13,20 @@ describe("celery functional tests", () => {
   const worker = new Worker(conf);
 
   before(() => {
-    worker.register('tasks.add', (a, b) => a + b);
+    worker.register("tasks.add", (a, b) => a + b);
     worker.start();
   });
-  
+
   after(() => {
-    Promise.all([
-      client.disconnect(),
-      worker.disconnect(),
-    ]);
+    Promise.all([client.disconnect(), worker.disconnect()]);
 
     const redis = new Redis();
-    redis.flushdb()
-    . then((() => redis.quit()));
-  })
-  
+    redis.flushdb().then(() => redis.quit());
+  });
+
   describe("initialization", () => {
     it("should create a valid redis client without error", done => {
-      client
-        .isReady()
-        .then(() => done());
+      client.isReady().then(() => done());
     });
   });
 
