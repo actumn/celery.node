@@ -1,8 +1,8 @@
-import { v4 } from 'uuid';
-import { CeleryConf, DEFAULT_CELERY_CONF } from './conf';
-import Base from './base';
-import Task from './task';
-import { AsyncResult } from './result';
+import { v4 } from "uuid";
+import { CeleryConf, DEFAULT_CELERY_CONF } from "./conf";
+import Base from "./base";
+import Task from "./task";
+import { AsyncResult } from "./result";
 
 /**
  * create json string representing celery task message. used by Client.publish
@@ -20,16 +20,16 @@ import { AsyncResult } from './result';
  * @returns {String} JSON serialized string of celery task message
  */
 export function createTaskMessage(
-  id: string, 
-  taskName: string, 
-  args?: Array<any>, 
+  id: string,
+  taskName: string,
+  args?: Array<any>,
   kwargs?: object
 ): string {
   const message = {
     id,
     task: taskName,
     args: args || [],
-    kwargs: kwargs || {},
+    kwargs: kwargs || {}
   };
 
   return JSON.stringify(message);
@@ -52,7 +52,7 @@ export default class Client extends Base {
    * @method Client#createTask
    * @param {string} name for task name
    * @returns {Task} task object
-   * 
+   *
    * @example
    * client.createTask('task.add').delay([1, 2])
    */
@@ -71,11 +71,7 @@ export default class Client extends Base {
    * @example
    * client.delay('tasks.add', [1, 2])
    */
-  public delay(
-    name: string, 
-    args: Array<any>, 
-    kwargs?: object
-  ): AsyncResult {
+  public delay(name: string, args: Array<any>, kwargs?: object): AsyncResult {
     const result = this.createTask(name).delay(args, kwargs);
 
     return result;
@@ -89,18 +85,13 @@ export default class Client extends Base {
    * @param {object} kwargs
    * @returns {AsyncResult} async result object for get result of delayed task
    */
-  public publish(
-    task: Task, 
-    args: Array<any>, 
-    kwargs: object
-  ): AsyncResult {
+  public publish(task: Task, args: Array<any>, kwargs: object): AsyncResult {
     const taskId = v4();
     const result = new AsyncResult(taskId, this.backend);
 
     const message = createTaskMessage(taskId, task.name, args, kwargs);
 
-    this.isReady()
-      .then(() => this.broker.publish('celery', message));
+    this.isReady().then(() => this.broker.publish("celery", message));
 
     return result;
   }

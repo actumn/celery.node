@@ -1,14 +1,25 @@
 {
-  "extends": "airbnb-base",
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier/@typescript-eslint",
+    "prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
   "plugins": [
+    "@typescript-eslint",
     "mocha"
   ],
+  "env": {
+    "node": true,
+    "es6": true,
+    "mocha": true
+  },
   "rules": {
+    "no-console": 0,
+    "@typescript-eslint/camelcase": 0,
     "mocha/no-exclusive-tests": "error",
     "prefer-rest-params": "off",
     "max-len": ["error", { "code": 200, "ignoreComments": true }]
-  },
-  "env": {
-    "mocha": true
   }
 }

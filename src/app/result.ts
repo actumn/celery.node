@@ -21,18 +21,34 @@ export class AsyncResult {
    * @method AsyncResult#get
    * @returns {Promise}
    */
-  get(): Promise<AsyncResult> {
+  get(timeout?: number): Promise<AsyncResult> {
     return new Promise((resolve, reject) => {
-      if (!this.result) {
-        this.backend.getTaskMeta(this.taskId)
-          .then((msg) => {
-            this.result = msg;
-            resolve(this.result);
-          })
-          .catch(reject);
-      } else {
+      if (this.result) {
         resolve(this.result);
       }
+
+      let timeoutId: NodeJS.Timeout; // eslint-disable-line prefer-const
+      let intervalId: NodeJS.Timeout; // eslint-disable-line prefer-const
+
+      if (timeout) {
+        timeoutId = setTimeout(() => {
+          clearInterval(intervalId);
+          resolve(null);
+        }, timeout);
+      }
+
+      intervalId = setInterval(() => {
+        this.backend.getTaskMeta(this.taskId).then(msg => {
+          if (msg) {
+            if (timeout) {
+              clearTimeout(timeoutId);
+            }
+            clearInterval(intervalId);
+            this.result = msg;
+            resolve(this.result);
+          }
+        });
+      }, 500);
     });
   }
 }

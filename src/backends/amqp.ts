@@ -1,9 +1,9 @@
-import * as amqplib from 'amqplib';
-import { CeleryBackend } from '.';
+import * as amqplib from "amqplib";
+import { CeleryBackend } from ".";
 
 export default class AMQPBackend implements CeleryBackend {
-  connect: Promise<amqplib.Connection>
-  channel: Promise<amqplib.Channel>
+  connect: Promise<amqplib.Connection>;
+  channel: Promise<amqplib.Channel>;
 
   /**
    * AMQP backend class
@@ -15,13 +15,17 @@ export default class AMQPBackend implements CeleryBackend {
     this.connect = amqplib.connect(url, opts);
     this.channel = this.connect
       .then(conn => conn.createChannel())
-      .then(ch => ch.assertExchange('default', 'direct', {
-        durable: true,
-        autoDelete: true,
-        internal: false,
-        // nowait: false,
-        arguments: null,
-      }).then(() => Promise.resolve(ch)));
+      .then(ch =>
+        ch
+          .assertExchange("default", "direct", {
+            durable: true,
+            autoDelete: true,
+            internal: false,
+            // nowait: false,
+            arguments: null
+          })
+          .then(() => Promise.resolve(ch))
+      );
   }
 
   /**
@@ -49,32 +53,45 @@ export default class AMQPBackend implements CeleryBackend {
    * @returns {Promise}
    */
   public storeResult(
-    taskId: string, 
-    result: any, 
+    taskId: string,
+    result: any,
     state: string
   ): Promise<boolean> {
-    const queue = taskId.replace(/-/g, '');
+    const queue = taskId.replace(/-/g, "");
     return this.channel
-      .then(ch => ch.assertQueue(queue, {
-        durable: true,
-        autoDelete: true,
-        exclusive: false,
-        // nowait: false,
-        arguments: {
-          'x-expires': 86400000,
-        },
-      }).then(() => Promise.resolve(ch)))
-      .then(ch => ch.publish('', queue, Buffer.from(JSON.stringify({
-        status: state,
-        result,
-        traceback: null,
-        children: [],
-        task_id: taskId,
-        date_done: new Date().toISOString(),
-      })), {
-        contentType: 'application/json',
-        contentEncoding: 'utf-8',
-      }));
+      .then(ch =>
+        ch
+          .assertQueue(queue, {
+            durable: true,
+            autoDelete: true,
+            exclusive: false,
+            // nowait: false,
+            arguments: {
+              "x-expires": 86400000
+            }
+          })
+          .then(() => Promise.resolve(ch))
+      )
+      .then(ch =>
+        ch.publish(
+          "",
+          queue,
+          Buffer.from(
+            JSON.stringify({
+              status: state,
+              result,
+              traceback: null,
+              children: [],
+              task_id: taskId,
+              date_done: new Date().toISOString()
+            })
+          ),
+          {
+            contentType: "application/json",
+            contentEncoding: "utf-8"
+          }
+        )
+      );
   }
 
   /**
@@ -84,34 +101,44 @@ export default class AMQPBackend implements CeleryBackend {
    * @returns {Promise}
    */
   public getTaskMeta(taskId: string): Promise<any> {
-    const queue = taskId.replace(/-/g, '');
+    const queue = taskId.replace(/-/g, "");
     return this.channel
-      .then(ch => ch.assertQueue(queue, {
-        durable: true,
-        autoDelete: true,
-        exclusive: false,
-        // nowait: false,
-        arguments: {
-          'x-expires': 86400000,
-        },
-      }).then(() => Promise.resolve(ch)))
-      .then(ch => ch.get(queue, {
-        noAck: false,
-      }))
-      .then((msg) => {
+      .then(ch =>
+        ch
+          .assertQueue(queue, {
+            durable: true,
+            autoDelete: true,
+            exclusive: false,
+            // nowait: false,
+            arguments: {
+              "x-expires": 86400000
+            }
+          })
+          .then(() => Promise.resolve(ch))
+      )
+      .then(ch =>
+        ch.get(queue, {
+          noAck: false
+        })
+      )
+      .then(msg => {
         if (msg === false) {
           throw new Error(`AMQPBackend try get msg from empty queue`);
         }
 
-        if (msg.properties.contentType !== 'application/json') {
-          throw new Error(`unsupported content type ${msg.properties.contentType}`);
+        if (msg.properties.contentType !== "application/json") {
+          throw new Error(
+            `unsupported content type ${msg.properties.contentType}`
+          );
         }
 
-        if (msg.properties.contentEncoding !== 'utf-8') {
-          throw new Error(`unsupported content encoding ${msg.properties.contentEncoding}`);
+        if (msg.properties.contentEncoding !== "utf-8") {
+          throw new Error(
+            `unsupported content encoding ${msg.properties.contentEncoding}`
+          );
         }
 
-        const body = msg.content.toString('utf-8');
+        const body = msg.content.toString("utf-8");
         return JSON.parse(body);
       });
   }

@@ -6,8 +6,8 @@ export interface CeleryConf {
 }
 
 export const DEFAULT_CELERY_CONF: CeleryConf = {
-  CELERY_BROKER: 'amqp://',
+  CELERY_BROKER: "amqp://",
   CELERY_BROKER_OPTIONS: {},
-  CELERY_BACKEND: 'amqp://',
-  CELERY_BACKEND_OPTIONS: {},
+  CELERY_BACKEND: "amqp://",
+  CELERY_BACKEND_OPTIONS: {}
 };

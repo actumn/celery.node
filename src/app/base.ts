@@ -2,13 +2,13 @@
  * writes here Base Parent class of Celery client and worker
  * @author SunMyeong Lee <actumn814@gmail.com>
  */
-import { CeleryConf, DEFAULT_CELERY_CONF } from './conf';
-import { newCeleryBroker, CeleryBroker } from '../kombu/brokers';
-import { newCeleryBackend, CeleryBackend } from '../backends';
+import { CeleryConf, DEFAULT_CELERY_CONF } from "./conf";
+import { newCeleryBroker, CeleryBroker } from "../kombu/brokers";
+import { newCeleryBackend, CeleryBackend } from "../backends";
 
 export default class Base {
-  backend: CeleryBackend
-  broker: CeleryBroker
+  backend: CeleryBackend;
+  broker: CeleryBroker;
   /**
    * Parent Class of Client and Worker
    * for creates an instance of celery broker and celery backend
@@ -22,13 +22,19 @@ export default class Base {
      * @member Base#backend
      * @protected
      */
-    this.backend = newCeleryBackend(conf.CELERY_BACKEND, conf.CELERY_BACKEND_OPTIONS);
+    this.backend = newCeleryBackend(
+      conf.CELERY_BACKEND,
+      conf.CELERY_BACKEND_OPTIONS
+    );
     /**
      * broker
      * @member Base#broker
      * @protected
      */
-    this.broker = newCeleryBroker(conf.CELERY_BROKER, conf.CELERY_BROKER_OPTIONS);
+    this.broker = newCeleryBroker(
+      conf.CELERY_BROKER,
+      conf.CELERY_BROKER_OPTIONS
+    );
   }
 
   /**
@@ -38,10 +44,7 @@ export default class Base {
    * @returns {Promise} promise that continues if backend and broker connected.
    */
   public isReady(): Promise<any> {
-    return Promise.all([
-      this.backend.isReady(),
-      this.broker.isReady(),
-    ]);
+    return Promise.all([this.backend.isReady(), this.broker.isReady()]);
   }
 
   /**
@@ -51,9 +54,6 @@ export default class Base {
    * @returns {Promise} promises that continues if backend and broker disconnected.
    */
   public disconnect(): Promise<any> {
-    return Promise.all([
-      this.backend.disconnect(),
-      this.broker.disconnect(),
-    ]);
+    return this.broker.disconnect().then(() => this.backend.disconnect());
   }
 }
