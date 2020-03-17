@@ -21,7 +21,7 @@ export class AsyncResult {
    * @method AsyncResult#get
    * @returns {Promise}
    */
-  get(timeout?: number): Promise<AsyncResult> {
+  get(timeout?: number): Promise<any> {
     return new Promise((resolve, reject) => {
       if (this.result) {
         resolve(this.result);

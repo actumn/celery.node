@@ -5,6 +5,6 @@ const client = celery.createClient({
   CELERY_BROKER: "amqp://",
   CELERY_BACKEND: "amqp://"
 });
-for (let i = 0; i < 1000; i++) {
-  client.delay("tasks.add", [1, 2]);
-}
+
+const result = client.delay("tasks.add", [1, 2]);
+result.get().then((data) => console.log(data));

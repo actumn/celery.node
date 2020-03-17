@@ -9,6 +9,7 @@ import { newCeleryBackend, CeleryBackend } from "../backends";
 export default class Base {
   backend: CeleryBackend;
   broker: CeleryBroker;
+  conf: CeleryConf;
   /**
    * Parent Class of Client and Worker
    * for creates an instance of celery broker and celery backend
@@ -35,6 +36,9 @@ export default class Base {
       conf.CELERY_BROKER,
       conf.CELERY_BROKER_OPTIONS
     );
+
+    this.conf = conf;
+    this.conf.TASK_PROTOCOL = 1;
   }
 
   /**

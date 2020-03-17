@@ -12,27 +12,35 @@ export default class AMQPBroker implements CeleryBroker {
    */
   constructor(url: string, opts: object) {
     this.connect = amqplib.connect(url, opts);
-    this.channel = this.connect
-      .then(conn => conn.createChannel())
-      .then(ch =>
-        ch
-          .assertExchange("default", "direct", {
-            durable: true,
-            autoDelete: true,
-            internal: false,
-            // nowait: false,
-            arguments: null
-          })
-          .then(() => Promise.resolve(ch))
-      );
+    this.channel = this.connect.then(conn => conn.createChannel());
   }
 
   /**
    * @method AMQPBroker#isReady
    * @returns {Promise} promises that continues if amqp connected.
    */
-  public isReady(): Promise<amqplib.Connection> {
-    return this.connect;
+  public isReady(): Promise<amqplib.Channel> {
+    return new Promise((resolve) => {
+      this.channel
+        .then((ch => {
+          Promise.all([
+            ch.assertExchange("default", "direct", {
+              durable: true,
+              autoDelete: true,
+              internal: false,
+              // nowait: false,
+              arguments: null
+            }),
+            ch.assertQueue("celery", {
+              durable: true,
+              autoDelete: false,
+              exclusive: false,
+              // nowait: false,
+              arguments: null
+            }),
+          ]).then(() => resolve());
+        }));
+    })
   }
 
   /**
@@ -45,15 +53,18 @@ export default class AMQPBroker implements CeleryBroker {
 
   /**
    * @method AMQPBroker#publish
-   * @param {String} queue
-   * @param {String} message
+   * 
    * @returns {Promise}
    */
-  public publish(queue: string, message: string): Promise<boolean> {
+  public publish(body: object | [Array<any>, object, object], exchange: string, routingKey: string, headers: object, properties: object): Promise<boolean> {
+    const messageBody = JSON.stringify(body);
+    const contentType = "application/json";
+    const contentEncoding = "utf-8"; 
+
     return this.channel
       .then(ch =>
         ch
-          .assertQueue(queue, {
+          .assertQueue(routingKey, {
             durable: true,
             autoDelete: false,
             exclusive: false,
@@ -62,10 +73,11 @@ export default class AMQPBroker implements CeleryBroker {
           })
           .then(() => Promise.resolve(ch))
       )
-      .then(ch =>
-        ch.publish("", queue, Buffer.from(message), {
-          contentType: "application/json",
-          contentEncoding: "utf-8"
+      .then(ch => ch.publish(exchange, routingKey, Buffer.from(messageBody), {
+          contentType,
+          contentEncoding,
+          headers,
+          ...properties,
         })
       );
   }

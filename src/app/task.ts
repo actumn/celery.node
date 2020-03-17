@@ -26,6 +26,10 @@ export default class Task {
    * client.createTask('task.add').delay([1, 2])
    */
   public delay(args: Array<any>, kwargs?: object): AsyncResult {
+    return this.applyAsync(args, kwargs)
+  }
+
+  public applyAsync(args: Array<any>, kwargs?: object): AsyncResult {
     if (args && !Array.isArray(args)) {
       throw new Error("args is not array");
     }
@@ -34,6 +38,6 @@ export default class Task {
       throw new Error("kwargs is not object");
     }
 
-    return this.client.publish(this, args || [], kwargs || {});
+    return this.client.sendTask(this.name, args || [], kwargs || {})
   }
 }

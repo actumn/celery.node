@@ -79,30 +79,33 @@ export default class RedisBroker implements CeleryBroker {
 
   /**
    * @method RedisBroker#publish
-   * @param {String} queue
-   * @param {String} message
+   * 
    * @returns {Promise}
    */
-  public publish(queue: string, message: string): Promise<number> {
+  public publish(body: object | [Array<any>, object, object], exchange: string, routingKey: string, headers: object, properties: object): Promise<number> {
+    const messageBody = JSON.stringify(body);
+    const contentType = "application/json";
+    const contentEncoding = "utf-8"; 
+    const message = {
+      body: Buffer.from(messageBody).toString("base64"),
+      "content-type": contentType,
+      "content-encoding": contentEncoding,
+      headers,
+      properties: {
+        body_encoding: "base64",
+        delivery_info: {
+          exchange: exchange,
+          routing_key: routingKey
+        },
+        delivery_mode: 2,
+        delivery_tag: v4(),
+        ...properties,
+      },
+    };
+    
     return this.redis.lpush(
-      queue,
-      JSON.stringify({
-        body: Buffer.from(message).toString("base64"),
-        headers: {},
-        "content-type": "application/json",
-        "content-encoding": "utf-8",
-        properties: {
-          body_encoding: "base64",
-          delivery_info: {
-            exchange: queue,
-            priority: 0,
-            routing_key: queue
-          },
-          delivery_mode: 2,
-          delivery_tag: v4(),
-          reply_to: v4()
-        }
-      })
+      routingKey, 
+      JSON.stringify(message)
     );
   }
 
