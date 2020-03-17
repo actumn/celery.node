@@ -7,4 +7,7 @@ const client = celery.createClient({
 });
 
 const result = client.delay("tasks.add", [1, 2]);
-result.get().then((data) => console.log(data));
+result.get().then((data) => {
+  console.log(data)
+  client.disconnect();
+});

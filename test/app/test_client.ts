@@ -42,7 +42,7 @@ describe("celery functional tests", () => {
       const result = client.createTask("tasks.add").applyAsync([1, 2]);
 
       result.get().then(message => {
-        assert.equal(message.result, 3);
+        assert.equal(message, 3);
         done();
       });
     });

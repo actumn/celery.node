@@ -2,6 +2,7 @@ import * as Redis from "ioredis";
 import * as urllib from "url";
 import { v4 } from "uuid";
 import { CeleryBroker } from ".";
+import { Message } from "../message";
 
 /**
  * codes from bull: https://github.com/OptimalBits/bull/blob/129c6e108ce67ca343c8532161d06742d92b651c/lib/queue.js#L296-L310
@@ -23,6 +24,24 @@ function redisOptsFromUrl(urlString): Redis.RedisOptions {
   }
   return redisOpts;
 }
+
+
+class RedisMessage extends Message { 
+  private raw: object;
+
+  constructor(payload: object) {
+    super(
+      Buffer.from(payload["body"], "base64"),
+      payload['content-type'],
+      payload['content-encoding'],
+      payload['properties'],
+      payload['headers']
+    );
+
+    this.raw = payload;
+  }
+}
+
 
 export default class RedisBroker implements CeleryBroker {
   redis: Redis.Redis;
@@ -122,7 +141,7 @@ export default class RedisBroker implements CeleryBroker {
       for (let index = 0; index < promiseCount; index += 1) {
         this.channels.push(
           new Promise(resolve =>
-            this.consumeTasks(index, resolve, queue, callback)
+            this.receive(index, resolve, queue, callback)
           )
         );
       }
@@ -138,14 +157,14 @@ export default class RedisBroker implements CeleryBroker {
    * @param {string} queue
    * @param {Function} callback
    */
-  private consumeTasks(
+  private receive(
     index: number,
     resolve: Function,
     queue: string,
     callback: Function
   ): void {
     process.nextTick(() =>
-      this.consumeTaskOnNextTick(index, resolve, queue, callback)
+      this.recieveOneOnNextTick(index, resolve, queue, callback)
     );
   }
 
@@ -157,7 +176,7 @@ export default class RedisBroker implements CeleryBroker {
    * @param {Function} callback
    * @returns {Promise}
    */
-  private consumeTaskOnNextTick(
+  private recieveOneOnNextTick(
     index: number,
     resolve: Function,
     queue: string,
@@ -168,15 +187,15 @@ export default class RedisBroker implements CeleryBroker {
       return;
     }
 
-    return this.basicConsume(queue)
+    return this.receiveOne(queue)
       .then(body => {
         if (body) {
           callback(body);
         }
         Promise.resolve();
       })
-      .then(() => this.consumeTasks(index, resolve, queue, callback))
-      .catch(err => console.error(err));
+      .then(() => this.receive(index, resolve, queue, callback))
+      .catch(err => console.log(err));
   }
 
   /**
@@ -184,35 +203,33 @@ export default class RedisBroker implements CeleryBroker {
    * @param {string} queue
    * @return {Promise}
    */
-  private basicConsume(queue: string): Promise<any> {
+  private receiveOne(queue: string): Promise<Message> {
     return this.redis.brpop(queue, "5").then(result => {
       if (!result) {
         return null;
       }
 
       const [queue, item] = result;
-      const task = JSON.parse(item);
+      const rawMsg = JSON.parse(item);
 
       // now supports only application/json of content-type
-      if (task["content-type"] !== "application/json") {
-        throw new Error(`unsupported content type ${task["content-type"]}`);
+      if (rawMsg["content-type"] !== "application/json") {
+        throw new Error(`unsupported content type ${rawMsg["content-type"]}`);
       }
       // now supports only base64 of body_encoding
-      if (task.properties.body_encoding !== "base64") {
+      if (rawMsg.properties.body_encoding !== "base64") {
         throw new Error(
-          `unsupported body encoding ${task.properties.body_encoding}`
+          `unsupported body encoding ${rawMsg.properties.body_encoding}`
         );
       }
-      // now supports only utf-9 of content-encoding
-      if (task["content-encoding"] !== "utf-8") {
+      // now supports only utf-8 of content-encoding
+      if (rawMsg["content-encoding"] !== "utf-8") {
         throw new Error(
-          `unsupported content encoding ${task["content-encoding"]}`
+          `unsupported content encoding ${rawMsg["content-encoding"]}`
         );
       }
 
-      const body = Buffer.from(task.body, "base64").toString("utf-8");
-
-      return JSON.parse(body);
+      return new RedisMessage(rawMsg);
     });
   }
 }

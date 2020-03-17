@@ -29,7 +29,7 @@ describe("node celery worker with redis broker", () => {
       const client = new Client(celeryOpts);
       const result = client.delay("tasks.add", [1, 2]);
       result.get().then(data => {
-        assert.equal(data.result, 3);
+        assert.equal(data, 3);
 
         client.disconnect().then(() => {
           done();
@@ -42,7 +42,7 @@ describe("node celery worker with redis broker", () => {
       const result = client.delay("tasks.add_kwargs", [], { a: 1, b: 2 });
 
       result.get().then(data => {
-        assert.equal(data.result, 3);
+        assert.equal(data, 3);
 
         client.disconnect().then(() => done());
       });
@@ -53,7 +53,7 @@ describe("node celery worker with redis broker", () => {
       const result = client.delay("tasks.add_mixed", [3, 4], { c: 1, d: 2 });
 
       result.get().then(data => {
-        assert.equal(data.result, 10);
+        assert.equal(data, 10);
 
         client.disconnect().then(() => done());
       });
@@ -85,7 +85,7 @@ describe("node celery worker with amqp broker", () => {
       const result = client.delay("tasks.add", [1, 2]);
 
       result.get().then(data => {
-        assert.equal(data.result, 3);
+        assert.equal(data, 3);
 
         client.disconnect().then(() => done());
       });
@@ -96,7 +96,7 @@ describe("node celery worker with amqp broker", () => {
       const result = client.delay("tasks.add_kwargs", [], { a: 1, b: 2 });
 
       result.get().then(data => {
-        assert.equal(data.result, 3);
+        assert.equal(data, 3);
 
         client.disconnect().then(() => done());
       });
@@ -107,7 +107,7 @@ describe("node celery worker with amqp broker", () => {
       const result = client.delay("tasks.add_mixed", [3, 4], { c: 1, d: 2 });
 
       result.get().then(data => {
-        assert.equal(data.result, 10);
+        assert.equal(data, 10);
 
         client.disconnect().then(() => done());
       });

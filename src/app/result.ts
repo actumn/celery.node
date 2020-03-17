@@ -44,7 +44,7 @@ export class AsyncResult {
               clearTimeout(timeoutId);
             }
             clearInterval(intervalId);
-            this.result = msg;
+            this.result = msg.result;
             resolve(this.result);
           }
         });

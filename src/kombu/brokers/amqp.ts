@@ -1,5 +1,19 @@
 import * as amqplib from "amqplib";
 import { CeleryBroker } from ".";
+import { Message } from "../message";
+
+
+class AMQPMessage extends Message {
+  constructor(payload: amqplib.ConsumeMessage) {
+    super(
+      payload.content,
+      payload.properties.contentType,
+      payload.properties.contentEncoding,
+      payload.properties,
+      payload.properties.headers,
+    );
+  }
+}
 
 export default class AMQPBroker implements CeleryBroker {
   connect: Promise<amqplib.Connection>;
@@ -90,7 +104,7 @@ export default class AMQPBroker implements CeleryBroker {
    */
   public subscribe(
     queue: string,
-    callback: Function
+    callback: (message: Message) => void
   ): Promise<amqplib.Replies.Consume> {
     return this.channel
       .then(ch =>
@@ -105,25 +119,24 @@ export default class AMQPBroker implements CeleryBroker {
           .then(() => Promise.resolve(ch))
       )
       .then(ch =>
-        ch.consume(queue, msg => {
-          ch.ack(msg);
+        ch.consume(queue, rawMsg => {
+          ch.ack(rawMsg);
 
           // now supports only application/json of content-type
-          if (msg.properties.contentType !== "application/json") {
+          if (rawMsg.properties.contentType !== "application/json") {
             throw new Error(
-              `unsupported content type ${msg.properties.contentType}`
+              `unsupported content type ${rawMsg.properties.contentType}`
             );
           }
 
           // now supports only utf-9 of content-encoding
-          if (msg.properties.contentEncoding !== "utf-8") {
+          if (rawMsg.properties.contentEncoding !== "utf-8") {
             throw new Error(
-              `unsupported content encoding ${msg.properties.contentEncoding}`
+              `unsupported content encoding ${rawMsg.properties.contentEncoding}`
             );
           }
 
-          const body = JSON.parse(msg.content.toString("utf-8"));
-          callback(body);
+          callback(new AMQPMessage(rawMsg));
         })
       );
   }

@@ -38,7 +38,7 @@ export default class Base {
     );
 
     this.conf = conf;
-    this.conf.TASK_PROTOCOL = 1;
+    this.conf.TASK_PROTOCOL = 2;
   }
 
   /**

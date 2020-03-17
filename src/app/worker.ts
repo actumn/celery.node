@@ -1,5 +1,6 @@
 import { CeleryConf, DEFAULT_CELERY_CONF } from "./conf";
 import Base from "./base";
+import { Message } from "../kombu/message";
 
 export default class Worker extends Base {
   handlers: object;
@@ -84,30 +85,84 @@ export default class Worker extends Base {
    * @param {String} queue queue name for task route
    */
   private getConsumer(queue: string): Function {
-    const receiveCallback = body => {
-      if (!body) {
+    const onMessage = this.createTaskHandler();
+
+    return () => this.broker.subscribe(queue, onMessage);
+  }
+  
+  public createTaskHandler(): Function {
+    const onTaskReceived = (message: Message) => {
+      if (!message) {
         return Promise.resolve();
       }
 
-      const handler = this.handlers[body.task];
+      let payload = null;
+      let taskName = message.headers['task'];
+      if (!taskName) {  // protocol v1
+        payload = message.decode();
+        taskName = payload['task']
+      }
+
+      // strategy
+      let body;
+      let headers;
+      if (payload == null && !('args' in message.decode())) {
+        body = message.decode(); // message.body;
+        headers = message.headers;
+      } else {
+        const args = payload['args'] || [];
+        const kwargs = payload['kwargs'] || {};
+        const embed = {
+          callbacks: payload['callbacks'],
+          errbacks: payload['errbacks'],
+          chord: payload['chord'],
+          chain: null,
+        };
+
+        body = [args, kwargs, embed];
+        headers = {
+          lang: payload['lang'],
+          task: payload['task'],
+          id: payload['id'],
+          rootId: payload['root_id'],
+          parantId: payload['parentId'],
+          group: payload['group'],
+          meth: payload['meth'],
+          shadow: payload['shadow'],
+          eta: payload['eta'],
+          expires: payload['expires'],
+          retries: payload['retries'] || 0,
+          timelimit: payload['timelimit'] || [null, null],
+          kwargsrepr: payload['kwargsrepr'],
+          origin: payload['origin'],
+        };
+      }
+
+      // request
+      const [args, kwargs, embed] = body;
+      const taskId = headers['id'];
+
+      const handler = this.handlers[taskName];
       if (!handler) {
-        throw new Error(`Missing process handler for task ${body.task}`);
+        throw new Error(`Missing process handler for task ${taskName}`);
       }
 
       console.info(
-        `celery.node receive task: ${body.task}, args: ${
-          body.args
-        }, kwargs: ${JSON.stringify(body.kwargs)}`
+        `celery.node Received task: ${taskName}[${taskId}], args: ${
+          args
+        }, kwargs: ${JSON.stringify(kwargs)}`
       );
-      const taskPromise = handler(...body.args, body.kwargs);
+
+      const taskPromise = handler(...args, kwargs);
       return taskPromise
         .then(result => {
-          this.backend.storeResult(body.id, result, "SUCCESS");
+          console.info(`celery.node Task  ${taskName}[${taskId}] succeeded: ${result}`);
+          this.backend.storeResult(taskId, result, "SUCCESS");
         })
         .then(() => Promise.resolve());
-    };
-
-    return () => this.broker.subscribe(queue, receiveCallback);
+      }
+      
+      return onTaskReceived;
   }
 
   /**
