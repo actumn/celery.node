@@ -5,10 +5,6 @@ celery = Celery('tasks',
     backend='amqp://'
 )
 
-celery.conf.update(
-    CELERY_TASK_PROTOCOL=1,
-)
-
-@celery.task()
+@celery.task(name='tasks.add')
 def add(x, y):
     return x + y

@@ -1,5 +1,18 @@
 import * as amqplib from "amqplib";
 import { CeleryBroker } from ".";
+import { Message } from "../message";
+
+class AMQPMessage extends Message {
+  constructor(payload: amqplib.ConsumeMessage) {
+    super(
+      payload.content,
+      payload.properties.contentType,
+      payload.properties.contentEncoding,
+      payload.properties,
+      payload.properties.headers
+    );
+  }
+}
 
 export default class AMQPBroker implements CeleryBroker {
   connect: Promise<amqplib.Connection>;
@@ -12,27 +25,34 @@ export default class AMQPBroker implements CeleryBroker {
    */
   constructor(url: string, opts: object) {
     this.connect = amqplib.connect(url, opts);
-    this.channel = this.connect
-      .then(conn => conn.createChannel())
-      .then(ch =>
-        ch
-          .assertExchange("default", "direct", {
-            durable: true,
-            autoDelete: true,
-            internal: false,
-            // nowait: false,
-            arguments: null
-          })
-          .then(() => Promise.resolve(ch))
-      );
+    this.channel = this.connect.then(conn => conn.createChannel());
   }
 
   /**
    * @method AMQPBroker#isReady
    * @returns {Promise} promises that continues if amqp connected.
    */
-  public isReady(): Promise<amqplib.Connection> {
-    return this.connect;
+  public isReady(): Promise<amqplib.Channel> {
+    return new Promise(resolve => {
+      this.channel.then(ch => {
+        Promise.all([
+          ch.assertExchange("default", "direct", {
+            durable: true,
+            autoDelete: true,
+            internal: false,
+            // nowait: false,
+            arguments: null
+          }),
+          ch.assertQueue("celery", {
+            durable: true,
+            autoDelete: false,
+            exclusive: false,
+            // nowait: false,
+            arguments: null
+          })
+        ]).then(() => resolve());
+      });
+    });
   }
 
   /**
@@ -45,15 +65,24 @@ export default class AMQPBroker implements CeleryBroker {
 
   /**
    * @method AMQPBroker#publish
-   * @param {String} queue
-   * @param {String} message
+   *
    * @returns {Promise}
    */
-  public publish(queue: string, message: string): Promise<boolean> {
+  public publish(
+    body: object | [Array<any>, object, object],
+    exchange: string,
+    routingKey: string,
+    headers: object,
+    properties: object
+  ): Promise<boolean> {
+    const messageBody = JSON.stringify(body);
+    const contentType = "application/json";
+    const contentEncoding = "utf-8";
+
     return this.channel
       .then(ch =>
         ch
-          .assertQueue(queue, {
+          .assertQueue(routingKey, {
             durable: true,
             autoDelete: false,
             exclusive: false,
@@ -63,9 +92,11 @@ export default class AMQPBroker implements CeleryBroker {
           .then(() => Promise.resolve(ch))
       )
       .then(ch =>
-        ch.publish("", queue, Buffer.from(message), {
-          contentType: "application/json",
-          contentEncoding: "utf-8"
+        ch.publish(exchange, routingKey, Buffer.from(messageBody), {
+          contentType,
+          contentEncoding,
+          headers,
+          ...properties
         })
       );
   }
@@ -78,7 +109,7 @@ export default class AMQPBroker implements CeleryBroker {
    */
   public subscribe(
     queue: string,
-    callback: Function
+    callback: (message: Message) => void
   ): Promise<amqplib.Replies.Consume> {
     return this.channel
       .then(ch =>
@@ -93,25 +124,24 @@ export default class AMQPBroker implements CeleryBroker {
           .then(() => Promise.resolve(ch))
       )
       .then(ch =>
-        ch.consume(queue, msg => {
-          ch.ack(msg);
+        ch.consume(queue, rawMsg => {
+          ch.ack(rawMsg);
 
           // now supports only application/json of content-type
-          if (msg.properties.contentType !== "application/json") {
+          if (rawMsg.properties.contentType !== "application/json") {
             throw new Error(
-              `unsupported content type ${msg.properties.contentType}`
+              `unsupported content type ${rawMsg.properties.contentType}`
             );
           }
 
           // now supports only utf-9 of content-encoding
-          if (msg.properties.contentEncoding !== "utf-8") {
+          if (rawMsg.properties.contentEncoding !== "utf-8") {
             throw new Error(
-              `unsupported content encoding ${msg.properties.contentEncoding}`
+              `unsupported content encoding ${rawMsg.properties.contentEncoding}`
             );
           }
 
-          const body = JSON.parse(msg.content.toString("utf-8"));
-          callback(body);
+          callback(new AMQPMessage(rawMsg));
         })
       );
   }

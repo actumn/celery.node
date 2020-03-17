@@ -5,7 +5,13 @@ import AMQPBroker from "./amqp";
 export interface CeleryBroker {
   isReady: () => Promise<any>;
   disconnect: () => Promise<any>;
-  publish: (queue: string, message: string) => Promise<any>;
+  publish: (
+    body: object | [Array<any>, object, object],
+    exchange: string,
+    routingKey: string,
+    headers: object,
+    properties: object
+  ) => Promise<any>;
   subscribe: (queue: string, callback: Function) => Promise<any>;
 }
 
@@ -35,7 +41,7 @@ function getProtocol(uri): string {
 /**
  *
  * @param {String} CELERY_BROKER
- * @param {String} CELERY_BROKER_OPTIONS
+ * @param {object} CELERY_BROKER_OPTIONS
  * @returns {CeleryBroker}
  */
 export function newCeleryBroker(

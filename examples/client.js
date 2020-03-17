@@ -1,10 +1,12 @@
 "use strict";
 const celery = require("../dist");
 
-const client = celery.createClient({
-  CELERY_BROKER: "amqp://",
-  CELERY_BACKEND: "amqp://"
+const client = celery.createClient();
+// client.conf.TASK_PROTOCOL = 1;
+
+const task = client.createTask("tasks.add");
+const result = task.applyAsync([1, 2]);
+result.get().then(data => {
+  console.log(data);
+  client.disconnect();
 });
-for (let i = 0; i < 1000; i++) {
-  client.delay("tasks.add", [1, 2]);
-}

@@ -123,7 +123,7 @@ export default class AMQPBackend implements CeleryBackend {
       )
       .then(msg => {
         if (msg === false) {
-          throw new Error(`AMQPBackend try get msg from empty queue`);
+          return null;
         }
 
         if (msg.properties.contentType !== "application/json") {
