@@ -49,25 +49,12 @@ Also, you can use celery.node as pure nodejs task queue.
 
 ### Protocol
  [celery protocol reference](https://docs.celeryproject.org/en/latest/internals/protocol.html)  
-Celery.node supports only Celery Message Protocol Version 1 right now.  
-So that if you want to make celery.node communicate with celery, you must set `CELERY_TASK_PROTOCOL` to 1.
+Celery.node now supports Celery Message Protocol Version 1 and Version 2.  
 ```
-{
-    "expires": null,
-    "utc": true,
-    "args": [10, 2],
-    "chord": null,
-    "callbacks": null,
-    "errbacks": null,
-    "taskset": null,
-    "id": "3d164d27-2ff1-4615-bd82-5115c905188b",
-    "retries": 0,
-    "task": "tasks.add",
-    "timelimit": [null, null],
-    "eta": null,
-    "kwargs": {}
-}
+
+client.conf.TASK_PROTOCOL = 1; // 1 or 2. default is 2.
 ```
+
 ## Install
 ```sh
 $ npm install celery-node
@@ -78,17 +65,15 @@ $ npm install celery-node
 ```javascript
 const celery = require('celery-node');
 
-const client = celery.createClient({
-  CELERY_BROKER: 'amqp://',
-  CELERY_BACKEND: 'amqp://'
+const client = celery.createClient();
+// client.conf.TASK_PROTOCOL = 2;
+
+const task = client.createTask("tasks.add");
+const result = task.applyAsync([1, 2]);
+result.get().then(data => {
+  console.log(data);
+  client.disconnect();
 });
-const result = client.delay('tasks.add', [1, 2]);
-setTimeout(() => {
-  result.get()
-    .then(data => {
-      console.log(data);
-    });
-}, 1000);
 ```
 #### python
 ```python
@@ -97,10 +82,6 @@ from celery import Celery
 app = Celery('tasks',
     broker='amqp://',
     backend='amqp://'
-)
-
-app.conf.update(
-    CELERY_TASK_PROTOCOL=1,
 )
 
 @app.task
@@ -116,11 +97,11 @@ if __name__ == '__main__':
 ```javascript
 const celery = require('celery-node');
 
-const worker = celery.createWorker({
-  CELERY_BROKER: 'amqp://',
-  CELERY_BACKEND: 'amqp://'
-});
-worker.register('tasks.add', (a, b) => a + b);
+const worker = celery.createWorker(
+  "amqp://",
+  "amqp://"
+);
+worker.register("tasks.add", (a, b) => a + b);
 worker.start();
 ```
 #### python
@@ -130,10 +111,6 @@ from celery import Celery
 app = Celery('tasks',
     broker='amqp://',
     backend='amqp://'
-)
-
-app.conf.update(
-    CELERY_TASK_PROTOCOL=1,
 )
 
 @app.task
