@@ -26,7 +26,7 @@ export default class Task {
    * client.createTask('task.add').delay([1, 2])
    */
   public delay(args: Array<any>, kwargs?: object): AsyncResult {
-    return this.applyAsync(args, kwargs)
+    return this.applyAsync(args, kwargs);
   }
 
   public applyAsync(args: Array<any>, kwargs?: object): AsyncResult {
@@ -38,6 +38,6 @@ export default class Task {
       throw new Error("kwargs is not object");
     }
 
-    return this.client.sendTask(this.name, args || [], kwargs || {})
+    return this.client.sendTask(this.name, args || [], kwargs || {});
   }
 }

@@ -25,23 +25,21 @@ function redisOptsFromUrl(urlString): Redis.RedisOptions {
   return redisOpts;
 }
 
-
-class RedisMessage extends Message { 
+class RedisMessage extends Message {
   private raw: object;
 
   constructor(payload: object) {
     super(
       Buffer.from(payload["body"], "base64"),
-      payload['content-type'],
-      payload['content-encoding'],
-      payload['properties'],
-      payload['headers']
+      payload["content-type"],
+      payload["content-encoding"],
+      payload["properties"],
+      payload["headers"]
     );
 
     this.raw = payload;
   }
 }
-
 
 export default class RedisBroker implements CeleryBroker {
   redis: Redis.Redis;
@@ -98,13 +96,19 @@ export default class RedisBroker implements CeleryBroker {
 
   /**
    * @method RedisBroker#publish
-   * 
+   *
    * @returns {Promise}
    */
-  public publish(body: object | [Array<any>, object, object], exchange: string, routingKey: string, headers: object, properties: object): Promise<number> {
+  public publish(
+    body: object | [Array<any>, object, object],
+    exchange: string,
+    routingKey: string,
+    headers: object,
+    properties: object
+  ): Promise<number> {
     const messageBody = JSON.stringify(body);
     const contentType = "application/json";
-    const contentEncoding = "utf-8"; 
+    const contentEncoding = "utf-8";
     const message = {
       body: Buffer.from(messageBody).toString("base64"),
       "content-type": contentType,
@@ -118,14 +122,11 @@ export default class RedisBroker implements CeleryBroker {
         },
         delivery_mode: 2,
         delivery_tag: v4(),
-        ...properties,
-      },
+        ...properties
+      }
     };
-    
-    return this.redis.lpush(
-      routingKey, 
-      JSON.stringify(message)
-    );
+
+    return this.redis.lpush(routingKey, JSON.stringify(message));
   }
 
   /**
@@ -140,9 +141,7 @@ export default class RedisBroker implements CeleryBroker {
     return this.isReady().then(() => {
       for (let index = 0; index < promiseCount; index += 1) {
         this.channels.push(
-          new Promise(resolve =>
-            this.receive(index, resolve, queue, callback)
-          )
+          new Promise(resolve => this.receive(index, resolve, queue, callback))
         );
       }
 

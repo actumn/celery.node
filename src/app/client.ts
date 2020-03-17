@@ -4,11 +4,10 @@ import Base from "./base";
 import Task from "./task";
 import { AsyncResult } from "./result";
 
-
 class TaskMessage {
   constructor(
-    readonly headers: object, 
-    readonly properties: object, 
+    readonly headers: object,
+    readonly properties: object,
     readonly body: [Array<any>, object, object] | object,
     readonly sentEvent: object
   ) {}
@@ -17,7 +16,7 @@ class TaskMessage {
 export default class Client extends Base {
   taskProtocols = {
     1: this.asTaskV1,
-    2: this.asTaskV2,
+    2: this.asTaskV2
   };
 
   /**
@@ -32,27 +31,21 @@ export default class Client extends Base {
   }
 
   get createTaskMessage(): (...args: any[]) => TaskMessage {
-    return this.taskProtocols[this.conf.TASK_PROTOCOL]
+    return this.taskProtocols[this.conf.TASK_PROTOCOL];
   }
 
   public sendTaskMessage(taskName: string, message: TaskMessage) {
     const { headers, properties, body, sentEvent } = message;
 
-    const exchange = ''; 
+    const exchange = "";
     // exchangeType = 'direct';
-    const routingKey = 'celery'; 
+    const routingKey = "celery";
     // const serializer = 'json';
 
-    this.isReady()
-      .then(() => this.broker.publish(
-        body,
-        exchange,
-        routingKey,
-        headers,
-        properties,
-      ));
+    this.isReady().then(() =>
+      this.broker.publish(body, exchange, routingKey, headers, properties)
+    );
   }
-
 
   public asTaskV2(
     taskId: string,
@@ -62,9 +55,9 @@ export default class Client extends Base {
   ): TaskMessage {
     const message: TaskMessage = {
       headers: {
-        lang: 'js',
+        lang: "js",
         task: taskName,
-        id: taskId,
+        id: taskId
         /*
         'shadow': shadow,
         'eta': eta,
@@ -81,10 +74,10 @@ export default class Client extends Base {
       },
       properties: {
         correlationId: taskId,
-        replyTo: '',
+        replyTo: ""
       },
       body: [args, kwargs, {}],
-      sentEvent: null,
+      sentEvent: null
     };
 
     return message;
@@ -110,15 +103,15 @@ export default class Client extends Base {
       headers: {},
       properties: {
         correlationId: taskId,
-        replyTo: '',
+        replyTo: ""
       },
       body: {
         task: taskName,
         id: taskId,
         args: args,
-        kwargs: kwargs,
+        kwargs: kwargs
       },
-      sentEvent: null,
+      sentEvent: null
     };
 
     return message;
@@ -154,8 +147,13 @@ export default class Client extends Base {
     return result;
   }
 
-  public sendTask(taskName: string, args?: Array<any>, kwargs?: object, taskId?: string) {
-    taskId = taskId || v4(); 
+  public sendTask(
+    taskName: string,
+    args?: Array<any>,
+    kwargs?: object,
+    taskId?: string
+  ) {
+    taskId = taskId || v4();
     const message = this.createTaskMessage(taskId, taskName, args, kwargs);
     this.sendTaskMessage(taskName, message);
 
