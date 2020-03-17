@@ -7,38 +7,41 @@ import { newCeleryBroker, CeleryBroker } from "../kombu/brokers";
 import { newCeleryBackend, CeleryBackend } from "../backends";
 
 export default class Base {
-  backend: CeleryBackend;
-  broker: CeleryBroker;
+  _backend: CeleryBackend;
+  _broker: CeleryBroker;
   conf: CeleryConf;
+
   /**
    * Parent Class of Client and Worker
    * for creates an instance of celery broker and celery backend
    *
    * @constructor Base
-   * @param {CeleryConf} conf the configuration object of Base class for both Celery client and worker, containing celery broker information and celery backend information
    */
-  constructor(conf: CeleryConf = DEFAULT_CELERY_CONF) {
-    /**
-     * backend
-     * @member Base#backend
-     * @protected
-     */
-    this.backend = newCeleryBackend(
-      conf.CELERY_BACKEND,
-      conf.CELERY_BACKEND_OPTIONS
-    );
-    /**
-     * broker
-     * @member Base#broker
-     * @protected
-     */
-    this.broker = newCeleryBroker(
-      conf.CELERY_BROKER,
-      conf.CELERY_BROKER_OPTIONS
-    );
+  constructor(broker: string, backend: string) {
+    this.conf = DEFAULT_CELERY_CONF;
+    this.conf.CELERY_BROKER = broker;
+    this.conf.CELERY_BACKEND = backend;
+  }
 
-    this.conf = conf;
-    this.conf.TASK_PROTOCOL = 2;
+  get broker(): CeleryBroker {
+    if (!this._broker) {
+      this._broker = newCeleryBroker(
+        this.conf.CELERY_BROKER,
+        this.conf.CELERY_BROKER_OPTIONS
+      );
+    }
+    return this._broker;
+  }
+
+  get backend(): CeleryBackend {
+    if (!this._backend) {
+      this._backend = newCeleryBackend(
+        this.conf.CELERY_BACKEND,
+        this.conf.CELERY_BACKEND_OPTIONS
+      );
+    }
+
+    return this._backend;
   }
 
   /**

@@ -14,21 +14,10 @@ class TaskMessage {
 }
 
 export default class Client extends Base {
-  taskProtocols = {
+  private taskProtocols = {
     1: this.asTaskV1,
     2: this.asTaskV2
   };
-
-  /**
-   * Celery client
-   * @extends {external:Base}
-   * @constructor Client
-   * @param {CeleryConf} conf configuration object of Celery Client. For more information, see Base#constructor.
-   */
-  // eslint-disable-next-line no-useless-constructor
-  constructor(conf: CeleryConf = DEFAULT_CELERY_CONF) {
-    super(conf);
-  }
 
   get createTaskMessage(): (...args: any[]) => TaskMessage {
     return this.taskProtocols[this.conf.TASK_PROTOCOL];

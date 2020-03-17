@@ -3,19 +3,7 @@ import Base from "./base";
 import { Message } from "../kombu/message";
 
 export default class Worker extends Base {
-  handlers: object;
-
-  /**
-   * Celery Worker
-   * @extends {external:Base}
-   * @constructor Worker
-   * @param {CeleryConf} conf configuration object of Celery Worker. For more information, see Base#constructor.
-   */
-  constructor(conf: CeleryConf = DEFAULT_CELERY_CONF) {
-    super(conf);
-
-    this.handlers = {};
-  }
+  handlers: object = {};
 
   /**
    * register task handler on worker h andlers

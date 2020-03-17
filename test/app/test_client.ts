@@ -5,12 +5,14 @@ import Worker from "../../src/app/worker";
 import { CeleryConf } from "../../src/app/conf";
 
 describe("celery functional tests", () => {
-  const conf = {
-    CELERY_BROKER: "redis://localhost:6379/0",
-    CELERY_BACKEND: "redis://localhost:6379/0"
-  } as CeleryConf;
-  const client = new Client(conf);
-  const worker = new Worker(conf);
+  const client = new Client(
+    "redis://localhost:6379/0",
+    "redis://localhost:6379/0"
+  );
+  const worker = new Worker(
+    "redis://localhost:6379/0",
+    "redis://localhost:6379/0"
+  );
 
   before(() => {
     worker.register("tasks.add", (a, b) => a + b);
