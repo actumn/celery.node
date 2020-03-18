@@ -65,7 +65,10 @@ $ npm install celery-node
 ```javascript
 const celery = require('celery-node');
 
-const client = celery.createClient();
+const client = celery.createClient(
+  "amqp://",
+  "amqp://"
+);
 // client.conf.TASK_PROTOCOL = 2;
 
 const task = client.createTask("tasks.add");
