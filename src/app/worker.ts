@@ -1,4 +1,3 @@
-import { CeleryConf, DEFAULT_CELERY_CONF } from "./conf";
 import Base from "./base";
 import { Message } from "../kombu/message";
 
@@ -142,11 +141,13 @@ export default class Worker extends Base {
         )}`
       );
 
+      const timeStart = process.hrtime();
       const taskPromise = handler(...args, kwargs);
       return taskPromise
         .then(result => {
+          const diff = process.hrtime(timeStart);
           console.info(
-            `celery.node Task  ${taskName}[${taskId}] succeeded: ${result}`
+            `celery.node Task  ${taskName}[${taskId}] succeeded: ${result} in ${diff[0] + diff[1]/1e9}`
           );
           this.backend.storeResult(taskId, result, "SUCCESS");
         })
