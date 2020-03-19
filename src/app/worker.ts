@@ -147,8 +147,8 @@ export default class Worker extends Base {
         .then(result => {
           const diff = process.hrtime(timeStart);
           console.info(
-            `celery.node Task  ${taskName}[${taskId}] succeeded: ${result} in ${diff[0] +
-              diff[1] / 1e9}`
+            `celery.node Task ${taskName}[${taskId}] succeeded in ${diff[0] +
+              diff[1] / 1e9}s: ${result}`
           );
           this.backend.storeResult(taskId, result, "SUCCESS");
         })
