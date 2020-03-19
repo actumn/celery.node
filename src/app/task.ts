@@ -18,15 +18,14 @@ export default class Task {
 
   /**
    * @method Task#delay
-   * @param {Array} args
-   * @param {object} kwargs
+   * 
    * @returns {AsyncResult} the result of client.publish
    *
    * @example
-   * client.createTask('task.add').delay([1, 2])
+   * client.createTask('task.add').delay(1, 2)
    */
-  public delay(args: Array<any>, kwargs?: object): AsyncResult {
-    return this.applyAsync(args, kwargs);
+  public delay(...args: any[]): AsyncResult {
+    return this.applyAsync([...args]);
   }
 
   public applyAsync(args: Array<any>, kwargs?: object): AsyncResult {

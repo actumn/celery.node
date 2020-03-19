@@ -119,23 +119,6 @@ export default class Client extends Base {
     return new Task(this, name);
   }
 
-  /**
-   * delay
-   * @method Client#delay
-   * @param {String} name the task name for create new delayed task
-   * @param {Array} args array for arguments of the delayed task
-   * @param {object} kwargs object for named arguments of the delayed task
-   * @returns {AsyncResult} async result object for get result of delayed task
-   *
-   * @example
-   * client.delay('tasks.add', [1, 2])
-   */
-  public delay(name: string, args: Array<any>, kwargs?: object): AsyncResult {
-    const result = this.createTask(name).delay(args, kwargs);
-
-    return result;
-  }
-
   public sendTask(
     taskName: string,
     args?: Array<any>,

@@ -29,7 +29,7 @@ describe("node celery worker with redis broker", () => {
         "redis://localhost:6379/0",
         "redis://localhost:6379/0"
       );
-      const result = client.delay("tasks.add", [1, 2]);
+      const result = client.sendTask("tasks.add", [1, 2]);
       result.get().then(data => {
         assert.equal(data, 3);
 
@@ -44,7 +44,7 @@ describe("node celery worker with redis broker", () => {
         "redis://localhost:6379/0",
         "redis://localhost:6379/0"
       );
-      const result = client.delay("tasks.add_kwargs", [], { a: 1, b: 2 });
+      const result = client.sendTask("tasks.add_kwargs", [], { a: 1, b: 2 });
 
       result.get().then(data => {
         assert.equal(data, 3);
@@ -58,7 +58,7 @@ describe("node celery worker with redis broker", () => {
         "redis://localhost:6379/0",
         "redis://localhost:6379/0"
       );
-      const result = client.delay("tasks.add_mixed", [3, 4], { c: 1, d: 2 });
+      const result = client.sendTask("tasks.add_mixed", [3, 4], { c: 1, d: 2 });
 
       result.get().then(data => {
         assert.equal(data, 10);
@@ -92,7 +92,7 @@ describe("node celery worker with amqp broker", () => {
         "redis://localhost:6379/0",
         "redis://localhost:6379/0"
       );
-      const result = client.delay("tasks.add", [1, 2]);
+      const result = client.sendTask("tasks.add", [1, 2]);
 
       result.get().then(data => {
         assert.equal(data, 3);
@@ -106,7 +106,7 @@ describe("node celery worker with amqp broker", () => {
         "redis://localhost:6379/0",
         "redis://localhost:6379/0"
       );
-      const result = client.delay("tasks.add_kwargs", [], { a: 1, b: 2 });
+      const result = client.sendTask("tasks.add_kwargs", [], { a: 1, b: 2 });
 
       result.get().then(data => {
         assert.equal(data, 3);
@@ -120,7 +120,7 @@ describe("node celery worker with amqp broker", () => {
         "redis://localhost:6379/0",
         "redis://localhost:6379/0"
       );
-      const result = client.delay("tasks.add_mixed", [3, 4], { c: 1, d: 2 });
+      const result = client.sendTask("tasks.add_mixed", [3, 4], { c: 1, d: 2 });
 
       result.get().then(data => {
         assert.equal(data, 10);

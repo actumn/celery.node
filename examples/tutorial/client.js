@@ -1,5 +1,5 @@
 "use strict";
-const celery = require("../dist");
+const celery = require("../../dist");
 
 const client = celery.createClient("amqp://", "amqp://");
 // client.conf.TASK_PROTOCOL = 1;

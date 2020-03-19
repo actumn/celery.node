@@ -22,7 +22,7 @@ export default class Worker extends Base {
       throw new Error("Already handler setted");
     }
 
-    this.handlers[name] = function registHandler(...args: any[]) {
+    this.handlers[name] = function registHandler(...args: any[]): Promise<any> {
       try {
         return Promise.resolve(handler(...args));
       } catch (err) {
