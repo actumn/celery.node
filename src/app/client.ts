@@ -23,7 +23,7 @@ export default class Client extends Base {
     return this.taskProtocols[this.conf.TASK_PROTOCOL];
   }
 
-  public sendTaskMessage(taskName: string, message: TaskMessage) {
+  public sendTaskMessage(taskName: string, message: TaskMessage): void {
     const { headers, properties, body, sentEvent } = message;
 
     const exchange = "";
@@ -141,7 +141,7 @@ export default class Client extends Base {
     args?: Array<any>,
     kwargs?: object,
     taskId?: string
-  ) {
+  ): AsyncResult {
     taskId = taskId || v4();
     const message = this.createTaskMessage(taskId, taskName, args, kwargs);
     this.sendTaskMessage(taskName, message);

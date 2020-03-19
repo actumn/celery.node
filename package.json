@@ -33,12 +33,11 @@
   },
   "homepage": "https://github.com/actumn/celery.node#readme",
   "devDependencies": {
-    "@babel/cli": "^7.8.3",
-    "@babel/core": "^7.8.3",
-    "@babel/preset-env": "^7.8.3",
-    "@babel/register": "^7.8.3",
+    "@types/amqplib": "^0.5.13",
     "@types/chai": "^4.2.9",
+    "@types/ioredis": "^4.14.6",
     "@types/mocha": "^7.0.1",
+    "@types/uuid": "^3.4.7",
     "@typescript-eslint/eslint-plugin": "^2.23.0",
     "@typescript-eslint/parser": "^2.23.0",
     "chai": "^4.2.0",
@@ -50,10 +49,7 @@
     "prettier": "^1.19.1",
     "sinon": "^7.2.2",
     "ts-node": "^8.6.2",
-    "typescript": "^3.7.2",
-    "@types/amqplib": "^0.5.13",
-    "@types/ioredis": "^4.14.6",
-    "@types/uuid": "^3.4.7"
+    "typescript": "^3.7.2"
   },
   "dependencies": {
     "amqplib": "^0.5.5",
