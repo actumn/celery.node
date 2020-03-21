@@ -2,7 +2,7 @@
 ### client
 ```javascript
 "use strict";
-const celery = require("../../dist");
+const celery = require("celery-node");
 
 const client = celery.createClient("redis://", "redis://");
 // client.conf.TASK_PROTOCOL = 1;
@@ -22,7 +22,7 @@ main();
 ### worker
 ```javascript
 "use strict";
-const celery = require('../../dist');
+const celery = require('celery-node');
 const worker = celery.createWorker("redis://", "redis://");
 
 worker.register("delay_job", async () => {

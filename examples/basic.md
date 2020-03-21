@@ -2,7 +2,7 @@
 ### client
 ```javascript
 "use strict";
-const celery = require("../../dist");
+const celery = require("celery-node");
 
 const client = celery.createClient("amqp://", "amqp://");
 // client.conf.TASK_PROTOCOL = 1;
@@ -17,7 +17,7 @@ result.get().then(data => {
 ### worker
 ```javascript
 "use strict";
-const celery = require("../../dist");
+const celery = require("celery-node");
 
 const worker = celery.createWorker("amqp://", "amqp://");
 worker.register("tasks.add", (a, b) => a + b);

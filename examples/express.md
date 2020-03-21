@@ -13,7 +13,7 @@ console.log( 'Video conversion server started on port 5000' );
 app.js
 ```javascript
 "use strict";
-const celery = require('../../dist');
+const celery = require('celery-node');
 const celeryClient = celery.createClient("redis://", "redis://");
 
 
@@ -37,7 +37,7 @@ module.exports = function initApp(app) {
 
 ### worker
 ```javascript
-const celery = require('../../dist');
+const celery = require('celery-node');
 const celeryWorker = celery.createWorker("redis://", "redis://");
 
 celeryWorker.register("video_conversion", async (name, frames) => {

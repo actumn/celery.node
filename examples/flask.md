@@ -31,7 +31,7 @@ if __name__ == '__main__':
 ### worker
 ```javascript
 "use strict";
-const celery = require('../../dist');
+const celery = require('celery-node');
 const celeryWorker = celery.createWorker("redis://", "redis://");
 
 celeryWorker.register("video_conversion", async (name, frames) => {
