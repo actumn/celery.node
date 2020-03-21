@@ -1,4 +1,5 @@
-![image](https://actumn.github.io/celery.node/assets/images/logo-long.png)
+![image](https://actumn.github.io/celery.node/assets/images/logo-word.png)  
+
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/actumn/celery.node/blob/master/LICENSE)
 
 Celery client / worker for in node.js  
@@ -10,10 +11,10 @@ This project focuses on implementing task queue using celery protocol in node.js
 Task queue is a mechanism to distribute or dispatch "tasks" or "jobs" across "workers" or "machines" for executing them asynchronously.
   
 Common use cases of task queue:
-- Video Encoding & Decoding
-- Resizing Pictures
-- Processing Bulk Updates
-- Any task which can be executed asynchronously
+- Video Encoding & Decoding  
+- Resizing Pictures  
+- Processing Bulk Updates  
+- Any task which can be executed asynchronously  
  ![image](https://actumn.github.io/celery.node/assets/images/task-queue-introduction.png)
   
 Applications, also called as "Producers", "Publishers" register logical blocks of code as "tasks".  
@@ -70,7 +71,6 @@ const client = celery.createClient(
   "amqp://",
   "amqp://"
 );
-// client.conf.TASK_PROTOCOL = 2;
 
 const task = client.createTask("tasks.add");
 const result = task.applyAsync([1, 2]);
