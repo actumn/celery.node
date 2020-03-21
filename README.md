@@ -130,7 +130,7 @@ Before contributing, please read [contributing.md](./contributing.md)
 Let's make this project more awesome!  
 
 ## Community
-Slack: https://celerynode.slack.com  
+If you want to talk about celery.node, please join [gitter chat room](https://gitter.im/celery-node/community) :)  
 
 ## License
 - MIT
