@@ -1,4 +1,4 @@
-![image](https://actumn.github.io/celery.node/assets/images/logo-word.png)  
+![image](https://actumn.github.io/celery.node/assets/images/logo-word-long.png)  
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/actumn/celery.node/blob/master/LICENSE)
 
