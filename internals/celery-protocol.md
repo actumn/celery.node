@@ -1,7 +1,7 @@
 ## Celery Protocol
 [Celery Protocol Reference](https://docs.celeryproject.org/en/latest/internals/protocol.html)
 
-There is 2 protocols in celery, since celery 4.x supports protocol version 2.  
+There is two kinds of protocols in celery, since celery 4.x supports protocol version 2.  
 And now celery.node supports both, too.  
   
 Default is version 2, but if you want to use version 1,  

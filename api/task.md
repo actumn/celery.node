@@ -1,1 +1,5 @@
 ## Task
+
+### .delay()
+
+### .applyAsync()

@@ -1,11 +1,12 @@
 ## Using async await
+If you want to use `async` - `await`, this example would be help.
+
 ### client
 ```javascript
 "use strict";
 const celery = require("celery-node");
 
 const client = celery.createClient("redis://", "redis://");
-// client.conf.TASK_PROTOCOL = 1;
 
 const task = client.createTask("delay_job");
 

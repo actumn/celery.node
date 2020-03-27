@@ -1,11 +1,12 @@
 ## Basic using redis
+This example describes how to use `celery-node` with redis.
+
 ### client
 ```javascript
 "use strict";
 const celery = require("celery-node");
 
 const client = celery.createClient("redis://", "redis://");
-// client.conf.TASK_PROTOCOL = 1;
 
 const task = client.createTask("tasks.add");
 const taskKwargs = client.createTask("tasks.add_kwargs");

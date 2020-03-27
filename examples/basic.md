@@ -1,11 +1,12 @@
 ## Basic
+This example describes how to use `celery-node` in basic.
+
 ### client
 ```javascript
 "use strict";
 const celery = require("celery-node");
 
 const client = celery.createClient("amqp://", "amqp://");
-// client.conf.TASK_PROTOCOL = 1;
 
 const task = client.createTask("tasks.add");
 const result = task.applyAsync([1, 2]);

@@ -1,1 +1,5 @@
 ## Client
+
+### .createTask()
+
+### .sendTask()
