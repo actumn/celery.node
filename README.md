@@ -1,4 +1,4 @@
-![image](https://actumn.github.io/celery.node/assets/images/logo-word-long.png)  
+![image](https://celery-node.js.org/assets/images/logo-word-long.png)  
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/actumn/celery.node/blob/master/LICENSE)
 
@@ -15,7 +15,7 @@ Common use cases of task queue:
 - Resizing Pictures  
 - Processing Bulk Updates  
 - Any task which can be executed asynchronously  
- ![image](https://actumn.github.io/celery.node/assets/images/task-queue-introduction.png)
+ ![image](https://celery-node.js.org/assets/images/task-queue-introduction.png)
   
 Applications, also called as "Producers", "Publishers" register logical blocks of code as "tasks".  
 Workers, also called "Consumers" consume these "task" and optionally store any results to a "message backend".  
@@ -41,7 +41,7 @@ The features of celery is
 Celery is written in Python, but the protocol can be implemneted in any languages. There's [gocelery](https://github.com/gocelery/gocelery) for Go and like gocelery, here's celery.node.
 
 ## Why celery.node?
-![image](https://actumn.github.io/celery.node/assets/images/celery.node-concept-image.png)
+![image](https://celery-node.js.org/assets/images/celery.node-concept-image.png)
   
 We usally make programs using different languages because of the specific features of each language and sometimes the programs should be communicated with each others by task-queueing, such as python web application with go worker or nodejs worker for better performance.  
   
