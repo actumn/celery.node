@@ -1,3 +1,0 @@
-## AsyncResult
-
-## .get()

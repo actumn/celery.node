@@ -1,4 +1,4 @@
-## Basic
+# Basic
 This example describes how to use `celery-node` in basic.
 
 ### client

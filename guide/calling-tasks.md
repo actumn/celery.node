@@ -1,1 +1,12 @@
-## Calling Tasks
+# Calling Tasks
+
+## Task
+
+### .delay()
+
+### .applyAsync()
+
+
+## AsyncResult
+
+## .get()

@@ -1,5 +1,5 @@
-## Using async await
-If you want to use `async` - `await`, this example would be help.
+# Using async await
+If you want to use `async / await`, this example would be help.
 
 ### client
 ```javascript
