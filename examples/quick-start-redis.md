@@ -1,4 +1,4 @@
-# Basic using redis
+# Quick start - redis
 This example describes how to use `celery-node` with redis.
 
 ### client

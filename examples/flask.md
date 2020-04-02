@@ -1,7 +1,7 @@
 # Using with python - flask
 Of course, you can easily integrate with python.
 
-### client
+### client (python flask) - api server
 ```python
 from flask import Flask, jsonify
 from celery import Celery

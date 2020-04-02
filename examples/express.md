@@ -1,7 +1,7 @@
 # Using express
 Integrate with express.js.  
 
-### express (client)
+### client (express.js) - api server
 server.js
 ```javascript
 "use strict";

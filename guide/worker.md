@@ -5,3 +5,10 @@ Create worker
 const celery = require('celery-node');
 
 ```
+
+### .register()
+
+### .start()
+
+### .stop()
+not implemented yet :(

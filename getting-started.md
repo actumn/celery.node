@@ -1,9 +1,9 @@
 # Getting Started
 ### Choosing a borker
 Celery supports various message broker.  
-If you wnat more information, check [here](https://docs.celeryproject.org/en/latest/getting-started/brokers/index.html).  
+If you wnat more information, check [here](https://github.com/celery/kombu#transport-comparison).  
 
-Now celery.node supports Redis and AMQP.
+Now celery.node supports Redis and AMQP, which are recommended when using celery.
 
 #### Redis
 [Redis](https://redis.io/)  

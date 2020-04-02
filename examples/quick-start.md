@@ -1,5 +1,5 @@
-# Basic
-This example describes how to use `celery-node` in basic.
+# Quick start
+This example describes how to use `celery-node`.
 
 ### client
 ```javascript
