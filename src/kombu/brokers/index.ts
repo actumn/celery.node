@@ -5,6 +5,7 @@ import AMQPBroker from "./amqp";
 export interface CeleryBroker {
   isReady: () => Promise<any>;
   disconnect: () => Promise<any>;
+  qos: (prefetchCount: number, applyGlobal: boolean) => any;
   publish: (
     body: object | [Array<any>, object, object],
     exchange: string,

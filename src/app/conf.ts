@@ -4,6 +4,7 @@ export interface CeleryConf {
   CELERY_BACKEND: string;
   CELERY_BACKEND_OPTIONS: object;
   TASK_PROTOCOL: number;
+  WORKER_PREFETCH_MULTIPLIER: number;
 }
 
 export const DEFAULT_CELERY_CONF: CeleryConf = {
@@ -11,5 +12,6 @@ export const DEFAULT_CELERY_CONF: CeleryConf = {
   CELERY_BROKER_OPTIONS: {},
   CELERY_BACKEND: "amqp://",
   CELERY_BACKEND_OPTIONS: {},
-  TASK_PROTOCOL: 2
+  TASK_PROTOCOL: 2,
+  WORKER_PREFETCH_MULTIPLIER: 4
 };

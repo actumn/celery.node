@@ -28,6 +28,12 @@ export default class AMQPBroker implements CeleryBroker {
     this.channel = this.connect.then(conn => conn.createChannel());
   }
 
+  public qos(prefetchCount = 0, applyGlobal: false): any {
+    this.channel.then(ch => {
+      ch.prefetch(prefetchCount, applyGlobal);
+    });
+  }
+
   /**
    * @method AMQPBroker#isReady
    * @returns {Promise} promises that continues if amqp connected.

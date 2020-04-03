@@ -59,6 +59,10 @@ export default class RedisBroker implements CeleryBroker {
     });
   }
 
+  public qos(prefetchCount = 0, applyGlobal: false): any {
+    // TODO :: implement here
+  }
+
   /**
    * codes from here: https://github.com/OptimalBits/bull/blob/129c6e108ce67ca343c8532161d06742d92b651c/lib/utils.js#L21-L44
    * @method RedisBroker#isReady

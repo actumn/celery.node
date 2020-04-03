@@ -41,6 +41,7 @@ export default class Worker extends Base {
   public start(): Promise<any> {
     console.info("celery.node worker start...");
     console.info(`registed task: ${Object.keys(this.handlers)}`);
+    this.broker.qos(this.conf.WORKER_PREFETCH_MULTIPLIER, true);
     return this.run().catch(err => console.error(err));
   }
 
