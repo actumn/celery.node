@@ -1,5 +1,5 @@
 "use strict";
-const celery = require('../../dist');
+const celery = require("../../dist");
 const worker = celery.createWorker("redis://", "redis://");
 
 worker.register("delay_job", async () => {
@@ -7,9 +7,9 @@ worker.register("delay_job", async () => {
 
   await new Promise((resolve, reject) => {
     setTimeout(resolve, delayTime);
-  })
+  });
   return {
     delayTime
-  }
+  };
 });
 worker.start();

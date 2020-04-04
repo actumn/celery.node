@@ -18,7 +18,7 @@ export default class Task {
 
   /**
    * @method Task#delay
-   * 
+   *
    * @returns {AsyncResult} the result of client.publish
    *
    * @example

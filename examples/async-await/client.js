@@ -8,9 +8,9 @@ const task = client.createTask("delay_job");
 
 async function main() {
   const result = task.applyAsync();
-  const data= await result.get();
+  const data = await result.get();
   console.log(data);
   await client.disconnect();
-} 
+}
 
 main();

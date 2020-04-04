@@ -73,7 +73,6 @@ Also, you can use celery.node as pure nodejs task queue.
  [celery protocol reference](https://docs.celeryproject.org/en/latest/internals/protocol.html)  
 Celery.node now supports Celery Message Protocol Version 1 and Version 2.  
 ```
-
 client.conf.TASK_PROTOCOL = 1; // 1 or 2. default is 2.
 ```
 
@@ -148,9 +147,6 @@ $ celery worker -A tasks --loglevel=INFO
 ## Contributing
 Before contributing, please read [contributing.md](./contributing.md)   
 Let's make this project more awesome!  
-
-## Community
-If you want to talk about celery.node, please join [gitter chat room](https://gitter.im/celery-node/community) :)  
 
 ## License
 - MIT
