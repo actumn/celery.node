@@ -1,11 +1,26 @@
-![image](https://celery-node.js.org/assets/images/logo-word-long.png)  
-
-[![Join chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/celery-node/community)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/actumn/celery.node/blob/master/LICENSE)
-[![Build Status](https://github.com/actumn/celery.node/workflows/build/badge.svg)](https://github.com/actumn/celery.node/actions)
-[![NPM Version](https://badge.fury.io/js/celery-node.svg)](https://www.npmjs.com/package/celery-node)
-[![NPM Downloads](https://img.shields.io/npm/dm/celery-node.svg)](https://www.npmjs.com/package/celery-node)
-
+<div align="center">
+  <br/>
+  <img src="https://celery-node.js.org/assets/images/logo-word-long.png"/>
+  <br/>
+  <br/>
+  <p>
+    <a href="https://gitter.im/celery-node/community">
+      <img src="https://badges.gitter.im/Join%20Chat.svg"/>
+    </a>
+    <a href="https://github.com/actumn/celery.node/blob/master/LICENSE">
+      <img src="https://img.shields.io/badge/license-MIT-blue.svg"/>
+    </a>
+    <a href="https://github.com/actumn/celery.node/actions">
+      <img src="https://github.com/actumn/celery.node/workflows/build/badge.svg"/>
+    </a>
+    <a href="https://www.npmjs.com/package/celery-node">
+      <img src="https://badge.fury.io/js/celery-node.svg"/>
+    </a>
+    <a href="https://www.npmjs.com/package/celery-node">
+      <img src="https://img.shields.io/npm/dm/celery-node.svg"/>
+    </a>
+  </p>
+</div>
 
 Celery client / worker for in node.js  
 This project focuses on implementing task queue using celery protocol in node.js influenced by [node-celery](https://github.com/mher/node-celery)
