@@ -3,7 +3,7 @@
 - Examples
   - [Quick start](examples/quick-start.md)
   - [Quick start - redis](examples/quick-start-redis.md)
-  - [Using async await](examples/async-await.md)
+  - [Using async / await](examples/async-await.md)
   - [Using express](examples/express.md)
   - [Using with python - flask](examples/flask.md)
 - User Guide

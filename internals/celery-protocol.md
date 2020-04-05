@@ -2,17 +2,18 @@
 [Celery Protocol Reference](https://docs.celeryproject.org/en/latest/internals/protocol.html)
 
 There is two kinds of protocols in celery, since celery 4.x supports protocol version 2.  
-And now celery.node supports both, too.  
+And now celery.node supports both.  
   
-Default is version 2, but if you want to use version 1,  
-You can change task protocol by setting `client.conf.TASK_PROTOCOL` to `1`
+Default is version 2.  
+But if you want to use version 1,  
+you can change task protocol by setting `client.conf.TASK_PROTOCOL` to `1`
 
 ```javascript
 client.conf.TASK_PROTOCOL = 1; // 1 or 2. default is 2.
 ```
 
 ### Protocol Version 2
-```javascript
+```json
 {
    "body":"W1sxLCAyXSwge30sIHsiY2FsbGJhY2tzIjogbnVsbCwgImVycmJhY2tzIjogbnVsbCwgImNoYWluIjogbnVsbCwgImNob3JkIjogbnVsbH1d",
    "content-encoding":"utf-8",
@@ -50,10 +51,23 @@ client.conf.TASK_PROTOCOL = 1; // 1 or 2. default is 2.
    }
 }
 ```
-
+#### Body
+As you can see `body_encoding`, body is encoded as base64.  
+Decoded message below.
+```json
+[
+   [1, 2], // args 
+   { },    // kwargs 
+   {       // options
+      "callbacks":null,
+      "errbacks":null,
+      "chain":null,
+      "chord":null
+   }
+]
+```
 ### Protocol Version 1
-```javascript
-message
+```json
 {
    "body":"eyJ0YXNrIjogInRhc2tzLmFkZCIsICJpZCI6ICIzMDhmOTE3Yy0zZjhlLTQ3YzQtYTkwOS02MTZiN2MyMDMwMWEiLCAiYXJncyI6IFsxLCAyXSwgImt3YXJncyI6IHt9LCAiZ3JvdXAiOiBudWxsLCAicmV0cmllcyI6IDAsICJldGEiOiBudWxsLCAiZXhwaXJlcyI6IG51bGwsICJ1dGMiOiB0cnVlLCAiY2FsbGJhY2tzIjogbnVsbCwgImVycmJhY2tzIjogbnVsbCwgInRpbWVsaW1pdCI6IFtudWxsLCBudWxsXSwgInRhc2tzZXQiOiBudWxsLCAiY2hvcmQiOiBudWxsfQ==",
    "content-encoding":"utf-8",
@@ -73,5 +87,30 @@ message
       "body_encoding":"base64",
       "delivery_tag":"b1590118-e7ca-4fb3-98f0-12fa4e7642ee"
    }
+}
+```
+
+#### Body
+As you can see `body_encoding`, body is encoded as base64.  
+Decoded message below.
+```json
+{
+   "task":"tasks.add",
+   "id":"308f917c-3f8e-47c4-a909-616b7c20301a",
+   "args":[1, 2],
+   "kwargs":{},
+   "group":null,
+   "retries":0,
+   "eta":null,
+   "expires":null,
+   "utc":true,
+   "callbacks":null,
+   "errbacks":null,
+   "timelimit":[
+      null,
+      null
+   ],
+   "taskset":null,
+   "chord":null
 }
 ```

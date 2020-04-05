@@ -1,5 +1,5 @@
 # Basic
-Let's see how to make client and worker.  
+`celery-node` provides the api to create celery.node client and worker. 
 ```javascript
 const celery = require('celery-node');
 
@@ -13,14 +13,16 @@ const client = celery.createClient("redis://", "redis://");
 ```javascript
 createWorker(broker?: string, backend?: string): Worker
 ```
-- broker default value is `amqp://`
-- backend default value is `amqp://`
+The function to create celery.node worker which consumes task from a broker, process code blocks and store results on a result backend
+
+- *broker* default value is `amqp://`
+- *backend* default value is `amqp://`
 
 #### Usage
 ```javascript
-const celery = require('celery-node');
+const celery = require("celery-node");
 
-// Below makes worker  
+// Below makes worker using default broker and backend ("amqp://") 
 const worker = celery.createWorker();
 // If you want to make worker using redis broker, backend 
 const worker = celery.createWorker("redis://", "redis://");
@@ -30,42 +32,18 @@ const worker = celery.createWorker("redis://", "redis://");
 ```javascript
 createClient(broker?: string, backend?: string): Worker
 ```
-- broker default value is `amqp://`
-- backend default value is `amqp://`
+The function to create celery.node client which produces tasks to a broker and get results from a result backend.
+
+- *broker* default value is `amqp://`
+- *backend* default value is `amqp://`
 
 #### Usage
 ```javascript
-const celery = require('celery-node');
+const celery = require("celery-node");
 
+// Below makes client using default broker and backend ("amqp://")
 const client = celery.createClient();
 // if you want to make worker using redis broker, backend 
 const client = celery.createClient("redis://", "redis://");
-```
-
-
-
-## Configuration
-
-- BROKER_OPTIONS
-
-the broker options of celery.node.  
-```javascript
-cleint.conf.BROKER_OPTIONS = {}
-worker.conf.BROKER_OPTIONS = {}
-```
-- BACKEND_OPTIONS
-
-the backend options of celery.node.  
-```javascript
-cleint.conf.BACKEND_OPTIONS = {} 
-worker.conf.BACKEND_OPTIONS = {}
-```
-- TASK_PROTOCOL
-
-the celery protocol version.  
-default is `2`.  
-If you want to see more, check [here](../internals/celery-protocol)
-```javascript
-client.conf.TASK_PROTOCOL = 2
 ```
 

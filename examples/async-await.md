@@ -1,4 +1,4 @@
-# Using async await
+# Using async / await
 If you want to use `async / await`, this example would be help.
 
 ### client
