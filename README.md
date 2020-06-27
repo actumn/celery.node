@@ -63,7 +63,7 @@ Celery is written in Python, but the protocol can be implemneted in any language
 ## Why celery.node?
 ![image](https://celery-node.js.org/assets/images/celery.node-concept-image.png)
   
-We usally make programs using different languages because of the specific features of each language and sometimes the programs should be communicated with each others by task-queueing, such as python web application with go worker or nodejs worker for better performance.  
+We usually make programs using different languages because of the specific features of each language and sometimes the programs should be communicated with each others by task-queueing, such as python web application with go worker or nodejs worker for better performance.
   
 We can make the programs distribute the tasks to processes written in different languages super easily by using celery, gocelery, and celery.node.
   
