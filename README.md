@@ -143,6 +143,25 @@ def add(x, y):
 ```shellscript
 $ celery worker -A tasks --loglevel=INFO
 ```
+### Run Example
+Ensure you already installed nodejs, npm, and docker-compose
+```sh
+# Generate dist/ directory, tutorial files depend on it
+$ npm run dist
+
+# start a docker container rabbitmq in the background
+$ docker-compose -f examples/docker-compose.yml up -d rabbit
+
+# run celery.node client with rabbitmq
+$ node examples/tutorial/client.js
+
+# run celery.node worker with rabbitmq
+# when you run worker, you can see the result printed out from client
+$ node examples/tutorial/worker.js
+
+# stop and remove containers
+$ docker-compose -f examples/docker-compose.yml down
+```
 
 ## Contributing
 Before contributing, please read [contributing.md](./contributing.md)   
