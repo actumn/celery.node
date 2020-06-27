@@ -63,7 +63,7 @@ Celery is written in Python, but the protocol can be implemneted in any language
 ## Why celery.node?
 ![image](https://celery-node.js.org/assets/images/celery.node-concept-image.png)
   
-We usally make programs using different languages because of the specific features of each language and sometimes the programs should be communicated with each others by task-queueing, such as python web application with go worker or nodejs worker for better performance.  
+We usually make programs using different languages because of the specific features of each language and sometimes the programs should be communicated with each others by task-queueing, such as python web application with go worker or nodejs worker for better performance.
   
 We can make the programs distribute the tasks to processes written in different languages super easily by using celery, gocelery, and celery.node.
   
@@ -142,6 +142,25 @@ def add(x, y):
 ```
 ```shellscript
 $ celery worker -A tasks --loglevel=INFO
+```
+### Run Example
+Ensure you already installed nodejs, npm, and docker-compose
+```sh
+# Generate dist/ directory, tutorial files depend on it
+$ npm run dist
+
+# start a docker container rabbitmq in the background
+$ docker-compose -f examples/docker-compose.yml up -d rabbit
+
+# run celery.node client with rabbitmq
+$ node examples/tutorial/client.js
+
+# run celery.node worker with rabbitmq
+# when you run worker, you can see the result printed out from client
+$ node examples/tutorial/worker.js
+
+# stop and remove containers
+$ docker-compose -f examples/docker-compose.yml down
 ```
 
 ## Contributing
