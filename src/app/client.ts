@@ -28,11 +28,10 @@ export default class Client extends Base {
 
     const exchange = "";
     // exchangeType = 'direct';
-    const routingKey = "celery";
     // const serializer = 'json';
 
     this.isReady().then(() =>
-      this.broker.publish(body, exchange, routingKey, headers, properties)
+      this.broker.publish(body, exchange, this.conf.CELERY_QUEUE, headers, properties)
     );
   }
 

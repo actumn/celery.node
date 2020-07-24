@@ -61,7 +61,7 @@ export default class Worker extends Base {
    * @returns function results
    */
   private processTasks(): Promise<any> {
-    const consumer = this.getConsumer("celery");
+    const consumer = this.getConsumer(this.conf.CELERY_QUEUE);
     return consumer();
   }
 
