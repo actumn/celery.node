@@ -5,7 +5,7 @@ export default class Worker extends Base {
   handlers: object = {};
 
   /**
-   * register task handler on worker h andlers
+   * register task handler on worker handlers
    * @method Worker#register
    * @param {String} name the name of task for dispatching.
    * @param {Function} handler the function for task handling
