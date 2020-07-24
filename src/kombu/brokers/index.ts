@@ -42,12 +42,13 @@ function getProtocol(uri): string {
  *
  * @param {String} CELERY_BROKER
  * @param {object} CELERY_BROKER_OPTIONS
+ * @param {string} CELERY_QUEUE
  * @returns {CeleryBroker}
  */
 export function newCeleryBroker(
   CELERY_BROKER: string,
   CELERY_BROKER_OPTIONS: any,
-  CELERY_QUEUE: string = "celery"
+  CELERY_QUEUE = "celery"
 ): CeleryBroker {
   const brokerProtocol = getProtocol(CELERY_BROKER);
   if (brokerProtocol === "redis") {
