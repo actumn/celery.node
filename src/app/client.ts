@@ -1,5 +1,4 @@
 import { v4 } from "uuid";
-import { CeleryConf, DEFAULT_CELERY_CONF } from "./conf";
 import Base from "./base";
 import Task from "./task";
 import { AsyncResult } from "./result";
@@ -24,15 +23,14 @@ export default class Client extends Base {
   }
 
   public sendTaskMessage(taskName: string, message: TaskMessage): void {
-    const { headers, properties, body, sentEvent } = message;
+    const { headers, properties, body /*, sentEvent */ } = message;
 
     const exchange = "";
     // exchangeType = 'direct';
-    const routingKey = "celery";
     // const serializer = 'json';
 
     this.isReady().then(() =>
-      this.broker.publish(body, exchange, routingKey, headers, properties)
+      this.broker.publish(body, exchange, this.conf.CELERY_QUEUE, headers, properties)
     );
   }
 

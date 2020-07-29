@@ -17,13 +17,17 @@ class AMQPMessage extends Message {
 export default class AMQPBroker implements CeleryBroker {
   connect: Promise<amqplib.Connection>;
   channel: Promise<amqplib.Channel>;
+  queue: string;
+
   /**
    * AMQP broker class
    * @constructor AMQPBroker
    * @param {string} url the connection string of amqp
    * @param {object} opts the options object for amqp connect of amqplib
+   * @param {string} queue optional. the queue to connect to.
    */
-  constructor(url: string, opts: object) {
+  constructor(url: string, opts: object, queue = "celery") {
+    this.queue = queue;
     this.connect = amqplib.connect(url, opts);
     this.channel = this.connect.then(conn => conn.createChannel());
   }
@@ -43,7 +47,7 @@ export default class AMQPBroker implements CeleryBroker {
             // nowait: false,
             arguments: null
           }),
-          ch.assertQueue("celery", {
+          ch.assertQueue(this.queue, {
             durable: true,
             autoDelete: false,
             exclusive: false,

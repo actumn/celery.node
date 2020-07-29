@@ -5,7 +5,7 @@ export default class Worker extends Base {
   handlers: object = {};
 
   /**
-   * register task handler on worker h andlers
+   * register task handler on worker handlers
    * @method Worker#register
    * @param {String} name the name of task for dispatching.
    * @param {Function} handler the function for task handling
@@ -61,7 +61,7 @@ export default class Worker extends Base {
    * @returns function results
    */
   private processTasks(): Promise<any> {
-    const consumer = this.getConsumer("celery");
+    const consumer = this.getConsumer(this.conf.CELERY_QUEUE);
     return consumer();
   }
 
@@ -74,11 +74,11 @@ export default class Worker extends Base {
   private getConsumer(queue: string): Function {
     const onMessage = this.createTaskHandler();
 
-    return () => this.broker.subscribe(queue, onMessage);
+    return () : any => this.broker.subscribe(queue, onMessage);
   }
 
   public createTaskHandler(): Function {
-    const onTaskReceived = (message: Message) => {
+    const onTaskReceived = (message: Message) : any => {
       if (!message) {
         return Promise.resolve();
       }
@@ -127,7 +127,7 @@ export default class Worker extends Base {
       }
 
       // request
-      const [args, kwargs, embed] = body;
+      const [args, kwargs /*, embed */] = body;
       const taskId = headers["id"];
 
       const handler = this.handlers[taskName];
@@ -164,7 +164,7 @@ export default class Worker extends Base {
    * @todo implement here
    */
   // eslint-disable-next-line class-methods-use-this
-  public stop() {
+  public stop(): any {
     throw new Error("not implemented yet");
   }
 }

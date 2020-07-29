@@ -42,11 +42,13 @@ function getProtocol(uri): string {
  *
  * @param {String} CELERY_BROKER
  * @param {object} CELERY_BROKER_OPTIONS
+ * @param {string} CELERY_QUEUE
  * @returns {CeleryBroker}
  */
 export function newCeleryBroker(
-  CELERY_BROKER,
-  CELERY_BROKER_OPTIONS
+  CELERY_BROKER: string,
+  CELERY_BROKER_OPTIONS: any,
+  CELERY_QUEUE = "celery"
 ): CeleryBroker {
   const brokerProtocol = getProtocol(CELERY_BROKER);
   if (brokerProtocol === "redis") {
@@ -54,7 +56,7 @@ export function newCeleryBroker(
   }
 
   if (brokerProtocol === "amqp") {
-    return new AMQPBroker(CELERY_BROKER, CELERY_BROKER_OPTIONS);
+    return new AMQPBroker(CELERY_BROKER, CELERY_BROKER_OPTIONS, CELERY_QUEUE);
   }
 
   // do not reach here.
