@@ -1,8 +1,11 @@
 import { CeleryBackend } from "../backends";
 
+type AsyncResultStatus = "PENDING" | "SUCCESS" | "FAILURE" | "TIMEOUT";
+
 export class AsyncResult {
   taskId: string;
   backend: CeleryBackend;
+  status: AsyncResultStatus;
   result: any;
 
   /**
@@ -14,6 +17,7 @@ export class AsyncResult {
   constructor(taskId: string, backend: CeleryBackend) {
     this.taskId = taskId;
     this.backend = backend;
+    this.status = "PENDING";
     this.result = null;
   }
 
@@ -33,6 +37,7 @@ export class AsyncResult {
       if (timeout) {
         timeoutId = setTimeout(() => {
           clearInterval(intervalId);
+          this.status = "TIMEOUT";
           resolve(null);
         }, timeout);
       }
@@ -44,6 +49,8 @@ export class AsyncResult {
               clearTimeout(timeoutId);
             }
             clearInterval(intervalId);
+
+            this.status = msg.status;
             this.result = msg.result;
             resolve(this.result);
           }
