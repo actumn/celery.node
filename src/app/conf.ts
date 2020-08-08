@@ -17,8 +17,8 @@ const DEFAULT_CELERY_CONF: CeleryConf = {
 };
 
 function cloneObject(obj: object): object {
-  var clone = {};
-  for(var i in obj) {
+  const clone = {};
+  for(const i in obj) {
       if(typeof(obj[i])=="object" && obj[i] != null)
           clone[i] = cloneObject(obj[i]);
       else
