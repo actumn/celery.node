@@ -7,7 +7,7 @@ export interface CeleryConf {
   TASK_PROTOCOL: number;
 }
 
-export const DEFAULT_CELERY_CONF: CeleryConf = {
+const DEFAULT_CELERY_CONF: CeleryConf = {
   CELERY_BROKER: "amqp://",
   CELERY_BROKER_OPTIONS: {},
   CELERY_BACKEND: "amqp://",
@@ -15,3 +15,18 @@ export const DEFAULT_CELERY_CONF: CeleryConf = {
   CELERY_QUEUE: "celery",
   TASK_PROTOCOL: 2
 };
+
+function cloneObject(obj: object): object {
+  var clone = {};
+  for(var i in obj) {
+      if(typeof(obj[i])=="object" && obj[i] != null)
+          clone[i] = cloneObject(obj[i]);
+      else
+          clone[i] = obj[i];
+  }
+  return clone;
+}
+
+export function defaultConf(): CeleryConf {
+  return cloneObject(DEFAULT_CELERY_CONF) as CeleryConf;
+}

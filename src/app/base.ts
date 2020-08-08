@@ -2,7 +2,7 @@
  * writes here Base Parent class of Celery client and worker
  * @author SunMyeong Lee <actumn814@gmail.com>
  */
-import { CeleryConf, DEFAULT_CELERY_CONF } from "./conf";
+import { CeleryConf, defaultConf } from "./conf";
 import { newCeleryBroker, CeleryBroker } from "../kombu/brokers";
 import { newCeleryBackend, CeleryBackend } from "../backends";
 
@@ -18,7 +18,7 @@ export default class Base {
    * @constructor Base
    */
   constructor(broker: string, backend: string, queue = "celery") {
-    this.conf = DEFAULT_CELERY_CONF;
+    this.conf = defaultConf();
     this.conf.CELERY_BROKER = broker;
     this.conf.CELERY_BACKEND = backend;
     this.conf.CELERY_QUEUE = queue;
