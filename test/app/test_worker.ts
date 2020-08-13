@@ -7,7 +7,7 @@ import { CeleryConf } from "../../src/app/conf";
 describe("node celery worker with redis broker", () => {
   const worker = new Worker(
     "redis://localhost:6379/0",
-    "redis://localhost:6379/0",
+    "redis://localhost:6379/0"
   );
 
   before(() => {

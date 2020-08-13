@@ -213,7 +213,9 @@ export default class RedisBroker implements CeleryBroker {
 
       // now supports only application/json of content-type
       if (rawMsg["content-type"] !== "application/json") {
-        throw new Error(`queue ${queue} item: unsupported content type ${rawMsg["content-type"]}`);
+        throw new Error(
+          `queue ${queue} item: unsupported content type ${rawMsg["content-type"]}`
+        );
       }
       // now supports only base64 of body_encoding
       if (rawMsg.properties.body_encoding !== "base64") {

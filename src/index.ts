@@ -7,7 +7,11 @@ import Worker from "./app/worker";
  * @function
  * @returns {Client}
  */
-export function createClient(broker = "amqp://", backend = "amqp://", queue = "celery"): Client {
+export function createClient(
+  broker = "amqp://",
+  backend = "amqp://",
+  queue = "celery"
+): Client {
   return new Client(broker, backend, queue);
 }
 
@@ -17,6 +21,10 @@ export function createClient(broker = "amqp://", backend = "amqp://", queue = "c
  * @function
  * @returns {Worker}
  */
-export function createWorker(broker = "amqp://", backend = "amqp://", queue = "celery"): Worker {
+export function createWorker(
+  broker = "amqp://",
+  backend = "amqp://",
+  queue = "celery"
+): Worker {
   return new Worker(broker, backend, queue);
 }
