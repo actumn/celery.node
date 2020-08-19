@@ -74,11 +74,11 @@ export default class Worker extends Base {
   private getConsumer(queue: string): Function {
     const onMessage = this.createTaskHandler();
 
-    return () : any => this.broker.subscribe(queue, onMessage);
+    return (): any => this.broker.subscribe(queue, onMessage);
   }
 
   public createTaskHandler(): Function {
-    const onTaskReceived = (message: Message) : any => {
+    const onTaskReceived = (message: Message): any => {
       if (!message) {
         return Promise.resolve();
       }

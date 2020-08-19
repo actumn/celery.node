@@ -30,7 +30,13 @@ export default class Client extends Base {
     // const serializer = 'json';
 
     this.isReady().then(() =>
-      this.broker.publish(body, exchange, this.conf.CELERY_QUEUE, headers, properties)
+      this.broker.publish(
+        body,
+        exchange,
+        this.conf.CELERY_QUEUE,
+        headers,
+        properties
+      )
     );
   }
 
