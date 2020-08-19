@@ -3,6 +3,7 @@ import { Message } from "../kombu/message";
 
 export default class Worker extends Base {
   handlers: object = {};
+  activeTasks: Set<Promise<any>> = new Set();
 
   /**
    * register task handler on worker handlers
@@ -142,20 +143,32 @@ export default class Worker extends Base {
       );
 
       const timeStart = process.hrtime();
-      const taskPromise = handler(...args, kwargs);
-      return taskPromise
-        .then(result => {
-          const diff = process.hrtime(timeStart);
-          console.info(
-            `celery.node Task ${taskName}[${taskId}] succeeded in ${diff[0] +
-              diff[1] / 1e9}s: ${result}`
-          );
-          this.backend.storeResult(taskId, result, "SUCCESS");
-        })
-        .then(() => Promise.resolve());
+      const taskPromise = handler(...args, kwargs).then(result => {
+        const diff = process.hrtime(timeStart);
+        console.info(
+          `celery.node Task ${taskName}[${taskId}] succeeded in ${diff[0] +
+            diff[1] / 1e9}s: ${result}`
+        );
+        this.backend.storeResult(taskId, result, "SUCCESS");
+        this.activeTasks.delete(taskPromise);
+      });
+
+      // record the executing task
+      this.activeTasks.add(taskPromise);
+
+      return taskPromise;
     };
 
     return onTaskReceived;
+  }
+
+  /**
+   * @method Worker#whenCurrentJobsFinished
+   *
+   * @returns Promise that resolves when all jobs are finished
+   */
+  public async whenCurrentJobsFinished(): Promise<any[]> {
+    return Promise.all(Array.from(this.activeTasks));
   }
 
   /**

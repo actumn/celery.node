@@ -17,6 +17,10 @@ describe("node celery worker with redis broker", () => {
     worker.start();
   });
 
+  afterEach(() => {
+    return worker.whenCurrentJobsFinished();
+  });
+
   after(() => {
     worker.disconnect();
     const redis = new Redis();
@@ -80,6 +84,10 @@ describe("node celery worker with amqp broker", () => {
     worker.register("tasks.add_kwargs", ({ a, b }) => a + b);
     worker.register("tasks.add_mixed", (a, b, { c, d }) => a + b + c + d);
     worker.start();
+  });
+
+  afterEach(() => {
+    return worker.whenCurrentJobsFinished();
   });
 
   after(() => {

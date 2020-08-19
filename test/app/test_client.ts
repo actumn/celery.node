@@ -19,6 +19,10 @@ describe("celery functional tests", () => {
     worker.start();
   });
 
+  afterEach(() => {
+    return worker.whenCurrentJobsFinished();
+  });
+
   after(() => {
     Promise.all([client.disconnect(), worker.disconnect()]);
 
