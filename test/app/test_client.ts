@@ -60,21 +60,12 @@ describe("celery functional tests", () => {
       result.get().then(() => done());
     });
 
-    it("should mark result with PENDING before completion", done => {
-      const result = client.createTask("tasks.add").applyAsync([1, 2]);
-
-      assert.strictEqual(result.status, "PENDING");
-
-      result.get().then(() => done());
-    });
-
-    it("should mark result with SUCCESS and resolve with the message", done => {
+    it("should resolve with the message", done => {
       const result = client.createTask("tasks.add").applyAsync([1, 2]);
 
       assert.instanceOf(result, AsyncResult);
 
       result.get().then(message => {
-        assert.strictEqual(result.status, "SUCCESS");
         assert.equal(message, 3);
         done();
       });
@@ -82,16 +73,20 @@ describe("celery functional tests", () => {
   });
 
   describe("timeout handing with the redis backend", () => {
-    it("should mark result with TIMEOUT and resolve with null", done => {
+    it("should reject with a TIMEOUT error", done => {
       const result = client
         .createTask("tasks.delayed")
         .applyAsync(["foo", 1000]);
 
-      result.get(500).then(message => {
-        assert.strictEqual(message, null);
-        assert.strictEqual(result.status, "TIMEOUT");
-        done();
-      });
+      result
+        .get(500)
+        .then(() => {
+          done(new Error("should not get here"));
+        })
+        .catch(error => {
+          assert.strictEqual(error.message, "TIMEOUT");
+          done();
+        })
     });
   });
 });
