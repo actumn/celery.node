@@ -10,6 +10,7 @@ export class AsyncResult {
   taskId: string;
   backend: CeleryBackend;
   result: any;
+  _promise: Promise<any>;
 
   /**
    * Asynchronous Result
@@ -21,6 +22,7 @@ export class AsyncResult {
     this.taskId = taskId;
     this.backend = backend;
     this.result = null;
+    this._promise = null;
   }
 
   /**
@@ -28,11 +30,11 @@ export class AsyncResult {
    * @returns {Promise}
    */
   get(timeout?: number): Promise<any> {
-    return new Promise((resolve, reject) => {
-      if (this.result) {
-        resolve(this.result);
-      }
+    if (this._promise) {
+      return this._promise;
+    }
 
+    const p = new Promise((resolve, reject) => {
       let timeoutId: NodeJS.Timeout; // eslint-disable-line prefer-const
       let intervalId: NodeJS.Timeout; // eslint-disable-line prefer-const
 
@@ -61,5 +63,7 @@ export class AsyncResult {
         });
       }, 500);
     });
+    this._promise = p;
+    return p;
   }
 }

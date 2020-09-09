@@ -1,5 +1,6 @@
 import { assert } from "chai";
 import * as Redis from "ioredis";
+import * as sinon from "sinon";
 import Client from "../../src/app/client";
 import Worker from "../../src/app/worker";
 import { AsyncResult } from "../../src/app/result";
@@ -28,6 +29,7 @@ describe("celery functional tests", () => {
   });
 
   afterEach(() => {
+    sinon.restore();
     return worker.whenCurrentJobsFinished();
   });
 
@@ -68,6 +70,27 @@ describe("celery functional tests", () => {
       result.get().then(message => {
         assert.equal(message, 3);
         done();
+      });
+    });
+
+    describe("when the the result has previously resolved", () => {
+      it("should immediately resolve when the task was previously resolved", done => {
+        const getTaskMetaSpy = sinon.spy(client.backend, 'getTaskMeta');
+
+        const result = client.createTask("tasks.add").applyAsync([1, 2]);
+
+        result
+          .get()
+          .then(() => {
+            // await the result a second time
+            return result.get();
+          })
+          .then(() => {
+            // the backend should not have been invoked more than once
+            assert.strictEqual(getTaskMetaSpy.callCount, 1);
+          })
+          .then(done)
+          .catch(done);
       });
     });
   });
