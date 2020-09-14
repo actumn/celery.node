@@ -1,9 +1,16 @@
 import { CeleryBackend } from "../backends";
 
+function createError(message: string, data: object): Error {
+  const error = new Error(message);
+  Object.assign(error, data);
+  return error;
+}
+
 export class AsyncResult {
   taskId: string;
   backend: CeleryBackend;
   result: any;
+  _promise: Promise<any>;
 
   /**
    * Asynchronous Result
@@ -15,6 +22,7 @@ export class AsyncResult {
     this.taskId = taskId;
     this.backend = backend;
     this.result = null;
+    this._promise = null;
   }
 
   /**
@@ -22,18 +30,18 @@ export class AsyncResult {
    * @returns {Promise}
    */
   get(timeout?: number): Promise<any> {
-    return new Promise((resolve, reject) => {
-      if (this.result) {
-        resolve(this.result);
-      }
+    if (this._promise) {
+      return this._promise;
+    }
 
+    const p = new Promise((resolve, reject) => {
       let timeoutId: NodeJS.Timeout; // eslint-disable-line prefer-const
       let intervalId: NodeJS.Timeout; // eslint-disable-line prefer-const
 
       if (timeout) {
         timeoutId = setTimeout(() => {
           clearInterval(intervalId);
-          resolve(null);
+          reject(createError("TIMEOUT", {}));
         }, timeout);
       }
 
@@ -44,11 +52,18 @@ export class AsyncResult {
               clearTimeout(timeoutId);
             }
             clearInterval(intervalId);
-            this.result = msg.result;
-            resolve(this.result);
+
+            if (msg.status === "SUCCESS") {
+              this.result = msg.result;
+              resolve(this.result);
+            } else {
+              reject(createError(msg.status, msg.result));
+            }
           }
         });
       }, 500);
     });
+    this._promise = p;
+    return p;
   }
 }

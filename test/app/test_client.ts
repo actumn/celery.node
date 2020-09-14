@@ -1,7 +1,9 @@
 import { assert } from "chai";
 import * as Redis from "ioredis";
+import * as sinon from "sinon";
 import Client from "../../src/app/client";
 import Worker from "../../src/app/worker";
+import { AsyncResult } from "../../src/app/result";
 import { CeleryConf } from "../../src/app/conf";
 
 describe("celery functional tests", () => {
@@ -16,10 +18,18 @@ describe("celery functional tests", () => {
 
   before(() => {
     worker.register("tasks.add", (a, b) => a + b);
+    worker.register(
+      "tasks.delayed",
+      (result, delay) =>
+        new Promise(resolve => {
+          setTimeout(() => resolve(result), delay);
+        })
+    );
     worker.start();
   });
 
   afterEach(() => {
+    sinon.restore();
     return worker.whenCurrentJobsFinished();
   });
 
@@ -47,10 +57,59 @@ describe("celery functional tests", () => {
     it("should return a task result", done => {
       const result = client.createTask("tasks.add").applyAsync([1, 2]);
 
+      assert.instanceOf(result, AsyncResult);
+
+      result.get().then(() => done());
+    });
+
+    it("should resolve with the message", done => {
+      const result = client.createTask("tasks.add").applyAsync([1, 2]);
+
+      assert.instanceOf(result, AsyncResult);
+
       result.get().then(message => {
         assert.equal(message, 3);
         done();
       });
+    });
+
+    describe("when the the result has previously resolved", () => {
+      it("should immediately resolve when the task was previously resolved", done => {
+        const getTaskMetaSpy = sinon.spy(client.backend, 'getTaskMeta');
+
+        const result = client.createTask("tasks.add").applyAsync([1, 2]);
+
+        result
+          .get()
+          .then(() => {
+            // await the result a second time
+            return result.get();
+          })
+          .then(() => {
+            // the backend should not have been invoked more than once
+            assert.strictEqual(getTaskMetaSpy.callCount, 1);
+          })
+          .then(done)
+          .catch(done);
+      });
+    });
+  });
+
+  describe("timeout handing with the redis backend", () => {
+    it("should reject with a TIMEOUT error", done => {
+      const result = client
+        .createTask("tasks.delayed")
+        .applyAsync(["foo", 1000]);
+
+      result
+        .get(500)
+        .then(() => {
+          done(new Error("should not get here"));
+        })
+        .catch(error => {
+          assert.strictEqual(error.message, "TIMEOUT");
+          done();
+        })
     });
   });
 });
