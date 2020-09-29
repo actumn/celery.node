@@ -29,11 +29,12 @@ export default class Client extends Base {
     // exchangeType = 'direct';
     // const serializer = 'json';
 
+    const _this = this;
     this.isReady().then(() =>
-      this.broker.publish(
+      _this.broker.publish(
         body,
         exchange,
-        this.conf.CELERY_QUEUE,
+        _this.conf.CELERY_QUEUE,
         headers,
         properties
       )
