@@ -2,10 +2,13 @@
   "compilerOptions": {
       "outDir": "./dist",
       "allowJs": true,
-      "target": "es5",
+      "target": "es6",
+      "lib": ["ES6"],
+      "moduleResolution": "node",
       "noEmitOnError": true,
       "typeRoots": ["./node_modules/@types"],
-      "declaration": true
+      "declaration": true,
+      "module": "CommonJS"
   },
   "include": [
       "./src/**/*"
