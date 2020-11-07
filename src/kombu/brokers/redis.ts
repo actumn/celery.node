@@ -186,7 +186,6 @@ export default class RedisBroker implements CeleryBroker {
       return;
     }
 
-    const _this = this;
     return this.receiveOne(queue)
       .then(body => {
         if (body) {
@@ -194,10 +193,10 @@ export default class RedisBroker implements CeleryBroker {
         }
         Promise.resolve();
       })
-      .then(() => _this.receive(index, resolve, queue, callback))
+      .then(() => this.receive(index, resolve, queue, callback))
       .catch((err) => {
           console.error(err);
-          return _this.receive(index, resolve, queue, callback);
+          return this.receive(index, resolve, queue, callback);
       });
   }
 
