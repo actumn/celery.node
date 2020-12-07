@@ -24,7 +24,7 @@ describe("amqp backend", () => {
 
       backend.storeResult(taskId, 3, "SUCCESS").then(() => {
         backend.getTaskMeta(taskId).then(data => {
-          assert.equal(data.result, 3);
+          assert.equal(data["result"], 3);
           backend.disconnect().then(() => done());
         });
       });

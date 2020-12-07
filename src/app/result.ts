@@ -9,8 +9,7 @@ function createError(message: string, data: object): Error {
 export class AsyncResult {
   taskId: string;
   backend: CeleryBackend;
-  result: any;
-  _promise: Promise<any>;
+  private _cache: Promise<any>;
 
   /**
    * Asynchronous Result
@@ -21,49 +20,63 @@ export class AsyncResult {
   constructor(taskId: string, backend: CeleryBackend) {
     this.taskId = taskId;
     this.backend = backend;
-    this.result = null;
-    this._promise = null;
+    this._cache = null;
   }
 
   /**
    * @method AsyncResult#get
    * @returns {Promise}
    */
-  get(timeout?: number): Promise<any> {
-    if (this._promise) {
-      return this._promise;
-    }
-
-    const p = new Promise((resolve, reject) => {
+  public get(timeout?: number): Promise<any> {
+    const waitFor = (resolve: (value?: object) => void) => {
       let timeoutId: NodeJS.Timeout; // eslint-disable-line prefer-const
       let intervalId: NodeJS.Timeout; // eslint-disable-line prefer-const
 
       if (timeout) {
         timeoutId = setTimeout(() => {
           clearInterval(intervalId);
-          reject(createError("TIMEOUT", {}));
+          resolve({status: "TIMEOUT", result: {}});
         }, timeout);
       }
 
       intervalId = setInterval(() => {
-        this.backend.getTaskMeta(this.taskId).then(msg => {
-          if (msg) {
+        this.backend.getTaskMeta(this.taskId).then(meta => {
+          if (meta) {
             if (timeout) {
               clearTimeout(timeoutId);
             }
             clearInterval(intervalId);
-
-            if (["FAILURE", "REVOKED"].includes(msg.status)) {
-              reject(createError(msg.status, msg.result));
-            } else {
-              this.result = msg.result;
-              resolve(this.result);
-            }
+            resolve(meta);
           }
         });
       }, 500);
+    };
+
+    if (!this._cache) {
+      this._cache = new Promise<object>((resolve) => {
+        waitFor(resolve);
+      });
+    } else {
+      const p = new Promise<object>((resolve) => {
+        this._cache.then(meta => {
+          if (meta && ["SUCCESS", "FAILURE", "REVOKED"].includes(meta["status"])) {
+            resolve(meta);
+          } else {
+            waitFor(resolve);
+          }
+        });
+      });
+      
+      this._cache = p;
+    }
+
+    return this._cache.then((meta) => {
+      if (["TIMEOUT", "FAILURE", "REVOKED"].includes(meta["status"])) {
+        throw createError(meta["status"], meta["result"]);
+      } else {
+        return meta["result"];
+      }
     });
-    this._promise = p;
-    return p;
   }
+
 }
