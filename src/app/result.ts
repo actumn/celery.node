@@ -79,4 +79,48 @@ export class AsyncResult {
     });
   }
 
+  private getTaskMeta(): Promise<object> {
+    if (!this._cache) {
+      this._cache = new Promise<object>((resolve) => {
+        this.backend.getTaskMeta(this.taskId)
+          .then(resolve);
+      });
+    } else {
+      const p = new Promise<object>((resolve) => {
+        this._cache.then(meta => {
+            if (meta && ["SUCCESS", "FAILURE", "REVOKED"].includes(meta["status"])) {
+              resolve(meta);
+            } else {
+              this.backend.getTaskMeta(this.taskId)
+                .then(resolve);
+            }
+          })
+      });
+      this._cache = p;
+    }
+
+    return this._cache;
+  }
+
+  public get result(): Promise<any> {
+    return this.getTaskMeta()
+      .then((meta) => {
+        if (meta) {
+          return meta["result"];
+        } else {
+          return null;
+        }
+      });
+  }
+
+  public get status(): Promise<string> {
+    return this.getTaskMeta()
+      .then((meta) => {
+        if (meta) {
+          return meta["status"];
+        } else {
+          return null;
+        }
+      });
+  }
 }
