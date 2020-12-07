@@ -53,7 +53,7 @@ export class AsyncResult {
             }
             clearInterval(intervalId);
 
-            if (msg.status in ["FAILURE", "REVOKED"]) {
+            if (["FAILURE", "REVOKED"].includes(msg.status)) {
               reject(createError(msg.status, msg.result));
             } else {
               this.result = msg.result;
