@@ -7,8 +7,8 @@ import { newCeleryBroker, CeleryBroker } from "../kombu/brokers";
 import { newCeleryBackend, CeleryBackend } from "../backends";
 
 export default class Base {
-  _backend: CeleryBackend;
-  _broker: CeleryBroker;
+  private _backend: CeleryBackend;
+  private _broker: CeleryBroker;
   conf: CeleryConf;
 
   /**
