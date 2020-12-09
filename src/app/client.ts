@@ -129,7 +129,7 @@ export default class Client extends Base {
    * @returns {AsyncResult} 
    */
   public asyncResult(taskId: string): AsyncResult {
-    return new AsyncResult(taskId, this._backend);
+    return new AsyncResult(taskId, this.backend);
   }
 
   public sendTask(

@@ -100,7 +100,7 @@ export default class AMQPBackend implements CeleryBackend {
    * @param {String} taskId
    * @returns {Promise}
    */
-  public getTaskMeta(taskId: string): Promise<any> {
+  public getTaskMeta(taskId: string): Promise<object> {
     const queue = taskId.replace(/-/g, "");
     return this.channel
       .then(ch =>

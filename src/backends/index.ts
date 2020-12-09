@@ -6,7 +6,7 @@ export interface CeleryBackend {
   isReady: () => Promise<any>;
   disconnect: () => Promise<any>;
   storeResult: (taskId: string, result: any, state: string) => Promise<any>;
-  getTaskMeta: (taskId: string) => Promise<any>;
+  getTaskMeta: (taskId: string) => Promise<object>;
 }
 
 /**
