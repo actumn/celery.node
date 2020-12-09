@@ -23,18 +23,25 @@ describe("AsyncResult", () => {
   });
 
   describe("get", () => {
-    it("should return result when data stored in backend", async () => {
+    it("should return result when data stored in backend", done => {
       // Arrange
       const testResult = "100";
       const testStatus = "SUCCESS";
       const asyncResult = new AsyncResult(testName, redisBackend);
-      await redisBackend.storeResult(testName, testResult, testStatus);
+      redisBackend.storeResult(testName, testResult, testStatus)
+        .then(() => {
+          // Action
+          asyncResult.get()
+            .then((result) => {
 
-      // Action
-      const result = await asyncResult.get();
-
-      // Assert
-      assert.strictEqual(result, testResult);
+              // Assert
+              assert.strictEqual(result, testResult);
+              done();
+            })
+            .catch(error => {
+              assert.fail(error.message);
+            });
+        });
     });
 
     it("should immediately resolve when the task was previously resolved", done => {
@@ -50,12 +57,18 @@ describe("AsyncResult", () => {
             .then(() => {
               return asyncResult.get();
             })
+            .catch(error => {
+              assert.fail(error.message);
+            })
             .then((result) => {
               // Assert
               assert.strictEqual(getTaskMetaSpy.callCount, 1);
               assert.strictEqual(result, testResult);
               done();
             })
+            .catch(error => {
+              assert.fail(error.message);
+            });
         });
     });
 
@@ -103,8 +116,8 @@ describe("AsyncResult", () => {
       // Arrange
       const testResult = "100";
       const testStatus = "FAILURE";
-      await redisBackend.storeResult(testName, testResult, testStatus);
       const asyncResult = new AsyncResult(testName, redisBackend);
+      await redisBackend.storeResult(testName, testResult, testStatus);
       
       // Action
       const result = await asyncResult.result();
@@ -169,17 +182,21 @@ describe("AsyncResult", () => {
               // await the result a second time
               return Promise.all([asyncResult.result(), asyncResult.status()]);
             })
+            .catch(error => {
+              assert.fail(error.message);
+            })
             .then((result) => {
 
               // Assert
-              console.log(result);
-              
               // the backend should not have been invoked more than once
               assert.strictEqual(getTaskMetaSpy.callCount, 1);
               assert.strictEqual(result[0], testResult);
               assert.strictEqual(result[1], testStatus);
               done();
             })
+            .catch(error => {
+              assert.fail(error.message);
+            });
         });
     });
   });
