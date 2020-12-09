@@ -138,7 +138,7 @@ export default class AMQPBroker implements CeleryBroker {
             );
           }
 
-          // now supports only utf-9 of content-encoding
+          // now supports only utf-8 of content-encoding
           if (rawMsg.properties.contentEncoding !== "utf-8") {
             throw new Error(
               `unsupported content encoding ${rawMsg.properties.contentEncoding}`
