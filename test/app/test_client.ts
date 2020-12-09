@@ -104,7 +104,7 @@ describe("celery functional tests", () => {
       result
         .get(500)
         .then(() => {
-          done(new Error("should not get here"));
+          assert.fail("should not get here");
         })
         .catch(error => {
           assert.strictEqual(error.message, "TIMEOUT");
