@@ -102,7 +102,7 @@ export class AsyncResult {
     return this._cache;
   }
 
-  public get result(): Promise<any> {
+  public result(): Promise<any> {
     return this.getTaskMeta()
       .then((meta) => {
         if (meta) {
@@ -113,7 +113,7 @@ export class AsyncResult {
       });
   }
 
-  public get status(): Promise<string> {
+  public status(): Promise<string> {
     return this.getTaskMeta()
       .then((meta) => {
         if (meta) {
