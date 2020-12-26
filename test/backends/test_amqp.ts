@@ -5,7 +5,7 @@ import AMQPBackend from "../../src/backends/amqp";
 const amqpUrl = "amqp://";
 
 describe("amqp backend", () => {
-  describe("stroeResult", () => {
+  describe("storeResult", () => {
     it("just store", done => {
       const taskId = v4();
       const backend = new AMQPBackend(amqpUrl, {});
