@@ -73,18 +73,28 @@ export default class AMQPBackend implements CeleryBackend {
           .then(() => Promise.resolve(ch))
       )
       .then(ch =>
+        
         ch.publish(
           "",
           queue,
           Buffer.from(
-            JSON.stringify({
-              status: state,
-              result,
-              traceback: null,
-              children: [],
-              task_id: taskId,
-              date_done: new Date().toISOString()
-            })
+            state == 'FAILURE' ?
+              JSON.stringify({
+                status: state,
+                result,
+                traceback: null,
+                children: [],
+                task_id: taskId,
+                date_done: new Date().toISOString()
+              }) :
+              JSON.stringify({
+                status: state,
+                result,
+                traceback: null,
+                children: [],
+                task_id: taskId,
+                date_done: new Date().toISOString()
+              })
           ),
           {
             contentType: "application/json",
