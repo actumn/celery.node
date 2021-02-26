@@ -11,6 +11,7 @@
     "dist": "tsc --project ./tsconfig.json",
     "test": "mocha -r ts-node/register ./test/**/*",
     "prepublishOnly": "npm run dist",
+    "postinstall": "npm run dist"
   },
   "repository": {
     "type": "git",
