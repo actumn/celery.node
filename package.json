@@ -16,6 +16,9 @@
     "type": "git",
     "url": "git+https://github.com/actumn/celery.node.git"
   },
+  "files":[
+    "dist"
+  ]
   "keywords": [
     "node-celery",
     "celery",
