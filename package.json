@@ -8,7 +8,7 @@
     "lint": "eslint --ext .js,.ts .",
     "format": "prettier --write \"{,!(node_modules)/**/}*.{js,ts}\"",
     "format-check": "prettier --check \"{,!(node_modules)/**/}*.{js,ts}\"",
-    "dist": "tsc",
+    "dist": "tsc --project ./tsconfig.json",
     "test": "mocha -r ts-node/register ./test/**/*",
     "prepublishOnly": "npm run dist",
     "postinstall": "npm run dist"
@@ -17,9 +17,6 @@
     "type": "git",
     "url": "git+https://github.com/actumn/celery.node.git"
   },
-  "files":[
-    "dist"
-  ],
   "keywords": [
     "node-celery",
     "celery",
