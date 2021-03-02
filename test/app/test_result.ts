@@ -114,7 +114,7 @@ describe("AsyncResult", () => {
   describe("result", () => {
     it("should return result when data stored in backend", async () => {
       // Arrange
-      const testResult = "100";
+      const testResult = null;
       const testStatus = "FAILURE";
       const asyncResult = new AsyncResult(testName, redisBackend);
       await redisBackend.storeResult(testName, testResult, testStatus);
@@ -122,7 +122,7 @@ describe("AsyncResult", () => {
       // Action
       const result = await asyncResult.result();
 
-      // Assert
+      // Assert (If task is FAILURE, the result should be NULL and the TRACEBACK should have the error message.)
       assert.strictEqual(result, testResult);
     });
 
