@@ -1,6 +1,7 @@
 node_modules
 .git*
 .vscode
+src
 test
 examples
 docs
@@ -8,3 +9,4 @@ docs
 .eslintrc
 .prettierignore
 *.md
+tsconfig.json
