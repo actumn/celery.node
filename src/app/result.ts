@@ -1,5 +1,16 @@
 import { CeleryBackend } from "../backends";
 
+const isFinalStatus = {
+  SUCCESS: true,
+  FAILURE: true,
+  REVOKED: true,
+}
+const isErrorStatus = {
+  TIMEOUT: true,
+  FAILURE: true,
+  REVOKED: true,
+}
+
 function createError(message: string, data: object): Error {
   const error = new Error(message);
   Object.assign(error, data);
@@ -41,7 +52,7 @@ export class AsyncResult {
 
       intervalId = setInterval(() => {
         this.backend.getTaskMeta(this.taskId).then(meta => {
-          if (meta) {
+          if (meta && isFinalStatus[meta["status"]]) {
             if (timeout) {
               clearTimeout(timeoutId);
             }
@@ -59,7 +70,7 @@ export class AsyncResult {
     } else {
       const p = new Promise<object>((resolve) => {
         this._cache.then(meta => {
-          if (meta && ["SUCCESS", "FAILURE", "REVOKED"].includes(meta["status"])) {
+          if (meta && isFinalStatus[meta["status"]]) {
             resolve(meta);
           } else {
             waitFor(resolve);
@@ -71,7 +82,7 @@ export class AsyncResult {
     }
 
     return this._cache.then((meta) => {
-      if (["TIMEOUT", "FAILURE", "REVOKED"].includes(meta["status"])) {
+      if (isErrorStatus[meta["status"]]) {
         throw createError(meta["status"], meta["result"]);
       } else {
         return meta["result"];
@@ -88,7 +99,7 @@ export class AsyncResult {
     } else {
       const p = new Promise<object>((resolve) => {
         this._cache.then(meta => {
-            if (meta && ["SUCCESS", "FAILURE", "REVOKED"].includes(meta["status"])) {
+            if (meta && isFinalStatus[meta["status"]]) {
               resolve(meta);
             } else {
               this.backend.getTaskMeta(this.taskId)
