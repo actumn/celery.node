@@ -151,6 +151,10 @@ export default class Worker extends Base {
         );
         this.backend.storeResult(taskId, result, "SUCCESS");
         this.activeTasks.delete(taskPromise);
+      }).catch(err => {
+        console.info(`celery.node Task ${taskName}[${taskId}] failed: [${err}]`);
+        this.backend.storeResult(taskId, err, "FAILURE");
+        this.activeTasks.delete(taskPromise);
       });
 
       // record the executing task
