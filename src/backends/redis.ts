@@ -98,15 +98,14 @@ export default class RedisBackend implements CeleryBackend {
   ): Promise<["OK", number]> {
     return this.set(
       `${keyPrefix}${taskId}`,
-      state == 'FAILURE' ?
-        JSON.stringify({
-          status: state,
-          result: state == 'FAILURE' ? null : result,
-          traceback: result,
-          children: [],
-          task_id: taskId,
-          date_done: new Date().toISOString()
-        })
+      JSON.stringify({
+        status: state,
+        result: state == 'FAILURE' ? null : result,
+        traceback: result,
+        children: [],
+        task_id: taskId,
+        date_done: new Date().toISOString()
+      })
     );
   }
 
