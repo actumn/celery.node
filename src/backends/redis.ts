@@ -101,16 +101,8 @@ export default class RedisBackend implements CeleryBackend {
       state == 'FAILURE' ?
         JSON.stringify({
           status: state,
-          result: null,
+          result: state == 'FAILURE' ? null : result,
           traceback: result,
-          children: [],
-          task_id: taskId,
-          date_done: new Date().toISOString()
-        }) : 
-        JSON.stringify({
-          status: state,
-          result,
-          traceback: null,
           children: [],
           task_id: taskId,
           date_done: new Date().toISOString()
