@@ -1,3 +1,12 @@
+
+export interface CeleryConfSchedule {
+  schedule: number,
+  task: string,
+  args: Array<any>,
+  kwargs: object,
+  options: object,
+}
+
 export interface CeleryConf {
   CELERY_BROKER: string;
   CELERY_BROKER_OPTIONS: object;
@@ -5,6 +14,7 @@ export interface CeleryConf {
   CELERY_BACKEND_OPTIONS: object;
   CELERY_QUEUE: string;
   TASK_PROTOCOL: number;
+  SCHEDULE: Map<String, CeleryConfSchedule>;
 }
 
 const DEFAULT_CELERY_CONF: CeleryConf = {
@@ -13,7 +23,8 @@ const DEFAULT_CELERY_CONF: CeleryConf = {
   CELERY_BACKEND: "amqp://",
   CELERY_BACKEND_OPTIONS: {},
   CELERY_QUEUE: "celery",
-  TASK_PROTOCOL: 2
+  TASK_PROTOCOL: 2,
+  SCHEDULE: new Map(),
 };
 
 function cloneObject(obj: object): object {
