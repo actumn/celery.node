@@ -136,6 +136,11 @@ export default class Worker extends Base {
         throw new Error(`Missing process handler for task ${taskName}`);
       }
 
+      // TODO:: compute eta and execute task after eta
+      // setTimeout(() => {
+
+      // }, eta ?? 0);
+
       console.info(
         `celery.node Received task: ${taskName}[${taskId}], args: ${args}, kwargs: ${JSON.stringify(
           kwargs

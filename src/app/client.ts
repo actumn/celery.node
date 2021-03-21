@@ -66,8 +66,8 @@ export default class Client extends Base {
         */
       },
       properties: {
-        correlationId: taskId,
-        replyTo: ""
+        correlation_id: taskId,
+        reply_to: "",
       },
       body: [args, kwargs, {}],
       sentEvent: null
@@ -95,14 +95,26 @@ export default class Client extends Base {
     const message: TaskMessage = {
       headers: {},
       properties: {
-        correlationId: taskId,
-        replyTo: ""
+        correlation_id: taskId,
+        reply_to: ""
       },
       body: {
         task: taskName,
         id: taskId,
         args: args,
         kwargs: kwargs
+        /*
+        'eta': eta,
+        'expires': expires,
+        'group': group_id,
+        'retries': retries,
+        'timelimit': [time_limit, soft_time_limit],
+        'root_id': root_id,
+        'parent_id': parent_id,
+        'argsrepr': argsrepr,
+        'kwargsrepr': kwargsrepr,
+        'origin': origin or anon_nodename()
+        */
       },
       sentEvent: null
     };
