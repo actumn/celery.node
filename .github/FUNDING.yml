@@ -1,5 +1,3 @@
 # These are supported funding model platforms
-
-github: [actumn] # Replace with up to 4 GitHub Sponsors-enabled usernames e.g., [user1, user2]
 liberapay: actumn # Replace with a single Liberapay username
-custom: ['https://paypal.me/actumn'] # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+custom: paypal.me/actumn # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
