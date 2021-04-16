@@ -57,7 +57,7 @@ export default class Client extends Base {
         lang: "js",
         task: taskName,
         id: taskId,
-        eta: eta.toISOString(),
+        eta: eta?.toISOString(),
         /*
         'expires': expires,
         'shadow': shadow,
