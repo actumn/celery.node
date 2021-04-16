@@ -100,6 +100,7 @@ export default class AMQPBroker implements CeleryBroker {
           contentType,
           contentEncoding,
           headers,
+          deliveryMode: 2,
           ...properties
         })
       );
