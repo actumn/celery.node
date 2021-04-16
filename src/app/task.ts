@@ -22,12 +22,12 @@ export interface TaskOptions {
    */
   eta: Date;
 
-  /**
-   * @member {Number | Date}
-   * Datetime or seconds in the future for the task should expire.
-   * The task won't be executed after the expiration time.
-   */
-  expires: number | Date;
+  // /**
+  //  * @member {Number | Date}
+  //  * Datetime or seconds in the future for the task should expire.
+  //  * The task won't be executed after the expiration time.
+  //  */
+  // expires: number | Date;
 
   // TODO:: retry, retryPolicy 
 }
@@ -68,6 +68,7 @@ export default class Task {
       throw new Error("kwargs is not object");
     }
 
-    return this.client.sendTask(this.name, args || [], kwargs || {});
+    
+    return this.client.sendTask(this.name, args || [], kwargs || {}, taskOptions?.taskId, taskOptions?.countdown, taskOptions?.eta);
   }
 }

@@ -44,17 +44,23 @@ export default class Client extends Base {
     taskId: string,
     taskName: string,
     args?: Array<any>,
-    kwargs?: object
+    kwargs?: object,
+    countdown?: number,
+    eta?: Date,
   ): TaskMessage {
+    if (countdown) {
+      eta = new Date(Date.now() + countdown * 1000);
+    }
+
     const message: TaskMessage = {
       headers: {
         lang: "js",
         task: taskName,
-        id: taskId
+        id: taskId,
+        eta: eta.toISOString(),
         /*
-        'shadow': shadow,
-        'eta': eta,
         'expires': expires,
+        'shadow': shadow,
         'group': group_id,
         'retries': retries,
         'timelimit': [time_limit, soft_time_limit],
@@ -90,8 +96,15 @@ export default class Client extends Base {
     taskId: string,
     taskName: string,
     args?: Array<any>,
-    kwargs?: object
+    kwargs?: object,
+    countdown?: number,
+    eta?: Date,
   ): TaskMessage {
+    // const expires = null;
+    if (countdown) {
+      eta = new Date(Date.now() + countdown * 1000);
+    }
+
     const message: TaskMessage = {
       headers: {},
       properties: {
@@ -102,9 +115,9 @@ export default class Client extends Base {
         task: taskName,
         id: taskId,
         args: args,
-        kwargs: kwargs
+        kwargs: kwargs,
+        eta: eta.toISOString(),
         /*
-        'eta': eta,
         'expires': expires,
         'group': group_id,
         'retries': retries,
@@ -148,10 +161,12 @@ export default class Client extends Base {
     taskName: string,
     args?: Array<any>,
     kwargs?: object,
-    taskId?: string
+    taskId?: string,
+    countdown?: number,
+    eta?: Date,
   ): AsyncResult {
     taskId = taskId || v4();
-    const message = this.createTaskMessage(taskId, taskName, args, kwargs);
+    const message = this.createTaskMessage(taskId, taskName, args, kwargs, countdown, eta);
     this.sendTaskMessage(taskName, message);
 
     const result = new AsyncResult(taskId, this.backend);
