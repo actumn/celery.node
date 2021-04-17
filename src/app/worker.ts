@@ -1,5 +1,6 @@
 import Base from "./base";
 import { Message } from "../kombu/message";
+import { parseISO8601 } from "../util/time";
 
 export default class Worker extends Base {
   handlers: object = {};
@@ -136,6 +137,8 @@ export default class Worker extends Base {
         throw new Error(`Missing process handler for task ${taskName}`);
       }
 
+      const eta = headers.eta ? parseISO8601(headers.eta) - Date.now() : 0;
+
       console.info(
         `celery.node Received task: ${taskName}[${taskId}], args: ${args}, kwargs: ${JSON.stringify(
           kwargs
@@ -143,18 +146,26 @@ export default class Worker extends Base {
       );
 
       const timeStart = process.hrtime();
-      const taskPromise = handler(...args, kwargs).then(result => {
-        const diff = process.hrtime(timeStart);
-        console.info(
-          `celery.node Task ${taskName}[${taskId}] succeeded in ${diff[0] +
-            diff[1] / 1e9}s: ${result}`
-        );
-        this.backend.storeResult(taskId, result, "SUCCESS");
-        this.activeTasks.delete(taskPromise);
-      }).catch(err => {
-        console.info(`celery.node Task ${taskName}[${taskId}] failed: [${err}]`);
-        this.backend.storeResult(taskId, err, "FAILURE");
-        this.activeTasks.delete(taskPromise);
+      const taskPromise = new Promise((resolve, reject) => {
+        setTimeout(() => {
+          handler(...args, kwargs)
+            .then(result => {
+              const diff = process.hrtime(timeStart);
+              console.info(
+                `celery.node Task ${taskName}[${taskId}] succeeded in ${diff[0] +
+                  diff[1] / 1e9}s: ${result}`
+              );
+              this.backend.storeResult(taskId, result, "SUCCESS");
+              this.activeTasks.delete(taskPromise);
+              resolve();
+            })
+            .catch(err => {
+              console.info(`celery.node Task ${taskName}[${taskId}] failed: [${err}]`);
+              this.backend.storeResult(taskId, err, "FAILURE");
+              this.activeTasks.delete(taskPromise);
+              reject();
+            });
+        }, eta ?? 0 );
       });
 
       // record the executing task
