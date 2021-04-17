@@ -1,5 +1,6 @@
 import Base from "./base";
 import { Message } from "../kombu/message";
+import { parseISO8601 } from "../util/time";
 
 export default class Worker extends Base {
   handlers: object = {};
@@ -136,7 +137,7 @@ export default class Worker extends Base {
         throw new Error(`Missing process handler for task ${taskName}`);
       }
 
-      const eta = headers.eta ? Date.parse(headers.eta) - Date.now() : 0;
+      const eta = headers.eta ? parseISO8601(headers.eta) - Date.now() : 0;
 
       console.info(
         `celery.node Received task: ${taskName}[${taskId}], args: ${args}, kwargs: ${JSON.stringify(
