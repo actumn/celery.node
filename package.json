@@ -1,6 +1,6 @@
 {
   "name": "celery-node",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "description": "celery written in nodejs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -55,7 +55,7 @@
     "typescript": "^3.7.2"
   },
   "dependencies": {
-    "amqplib": "^0.5.5",
+    "amqplib": "^0.7.1",
     "ioredis": "^4.14.0",
     "uuid": "^3.3.2"
   }
