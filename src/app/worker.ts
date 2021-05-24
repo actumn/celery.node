@@ -130,6 +130,7 @@ export default class Worker extends Base {
       // request
       const [args, kwargs /*, embed */] = body;
       const taskId = headers["id"];
+      const self = headers;
 
       const handler = this.handlers[taskName];
       if (!handler) {
@@ -143,7 +144,7 @@ export default class Worker extends Base {
       );
 
       const timeStart = process.hrtime();
-      const taskPromise = handler(...args, kwargs).then(result => {
+      const taskPromise = handler(...args, kwargs, self).then(result => {
         const diff = process.hrtime(timeStart);
         console.info(
           `celery.node Task ${taskName}[${taskId}] succeeded in ${diff[0] +
