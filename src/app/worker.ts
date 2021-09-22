@@ -6,7 +6,7 @@ export default class Worker extends Base {
   activeTasks: Set<Promise<any>> = new Set();
 
   /**
-   * register task handler on worker handlers
+   * Register task handler on worker handlers
    * @method Worker#register
    * @param {String} name the name of task for dispatching.
    * @param {Function} handler the function for task handling
@@ -20,7 +20,7 @@ export default class Worker extends Base {
       throw new Error("Undefined handler");
     }
     if (this.handlers[name]) {
-      throw new Error("Already handler setted");
+      throw new Error("Handler is already set");
     }
 
     this.handlers[name] = function registHandler(...args: any[]): Promise<any> {
@@ -33,15 +33,15 @@ export default class Worker extends Base {
   }
 
   /**
-   * start celery worker to run
+   * Start celery worker to run
    * @method Worker#start
    * @example
    * worker.register('tasks.add', (a, b) => a + b);
    * worker.start();
    */
   public start(): Promise<any> {
-    console.info("celery.node worker start...");
-    console.info(`registed task: ${Object.keys(this.handlers)}`);
+    console.info("celery.node worker starting...");
+    console.info(`registered task: ${Object.keys(this.handlers)}`);
     return this.run().catch(err => console.error(err));
   }
 
