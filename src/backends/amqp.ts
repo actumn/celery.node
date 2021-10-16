@@ -2,6 +2,7 @@ import * as amqplib from "amqplib";
 import { CeleryBackend } from ".";
 
 export default class AMQPBackend implements CeleryBackend {
+  opts: { [ key:string ]: any };
   connect: Promise<amqplib.Connection>;
   channel: Promise<amqplib.Channel>;
 
@@ -12,6 +13,7 @@ export default class AMQPBackend implements CeleryBackend {
    * @param {object} opts the options object for amqp connect of amqplib
    */
   constructor(url: string, opts: object) {
+    this.opts = opts;
     this.connect = amqplib.connect(url, opts);
     this.channel = this.connect
       .then(conn => conn.createChannel())
@@ -67,13 +69,13 @@ export default class AMQPBackend implements CeleryBackend {
             exclusive: false,
             // nowait: false,
             arguments: {
-              "x-expires": 86400000
+              "x-expires": this.opts.CELERY_RESULT_EXPIRES || 86400000
             }
           })
           .then(() => Promise.resolve(ch))
       )
       .then(ch =>
-        
+
         ch.publish(
           "",
           queue,
@@ -112,7 +114,7 @@ export default class AMQPBackend implements CeleryBackend {
             exclusive: false,
             // nowait: false,
             arguments: {
-              "x-expires": 86400000
+              "x-expires": this.opts.CELERY_RESULT_EXPIRES || 86400000
             }
           })
           .then(() => Promise.resolve(ch))
