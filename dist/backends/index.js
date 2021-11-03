@@ -8,7 +8,7 @@ const amqp_1 = require("./amqp");
  * @private
  * @constant
  */
-const supportedProtocols = ["redis", "amqp"];
+const supportedProtocols = ["redis", "amqp", "amqps"];
 /**
  * takes url string and after parsing scheme of url, returns protocol.
  *

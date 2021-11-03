@@ -8,7 +8,7 @@ const amqp_1 = require("./amqp");
  * @private
  * @constant
  */
-const supportedProtocols = ["redis", "amqp"];
+const supportedProtocols = ["redis", "amqp", "amqps"];
 /**
  * takes url string and after parsing scheme of url, returns protocol.
  *
@@ -36,7 +36,7 @@ function newCeleryBroker(CELERY_BROKER, CELERY_BROKER_OPTIONS, CELERY_QUEUE = "c
     if (brokerProtocol === "redis") {
         return new redis_1.default(CELERY_BROKER, CELERY_BROKER_OPTIONS);
     }
-    if (brokerProtocol === "amqp") {
+    if (brokerProtocol.startsWith("amqp")) {
         return new amqp_1.default(CELERY_BROKER, CELERY_BROKER_OPTIONS, CELERY_QUEUE);
     }
     // do not reach here.
