@@ -37,7 +37,7 @@ export default class AMQPBroker implements CeleryBroker {
    * @returns {Promise} promises that continues if amqp connected.
    */
   public isReady(): Promise<amqplib.Channel> {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.channel.then(ch => {
         Promise.all([
           ch.assertExchange("default", "direct", {
@@ -54,7 +54,9 @@ export default class AMQPBroker implements CeleryBroker {
             // nowait: false,
             arguments: null
           })
-        ]).then(() => resolve());
+        ])
+        .then(() => resolve())
+        .catch(reject);
       });
     });
   }
