@@ -55,7 +55,7 @@ export function newCeleryBroker(
     return new RedisBroker(CELERY_BROKER, CELERY_BROKER_OPTIONS);
   }
 
-  if (brokerProtocol.startsWith("amqp")) {
+  if (['amqp', 'amqps'].indexOf(brokerProtocol) > -1) {
     return new AMQPBroker(CELERY_BROKER, CELERY_BROKER_OPTIONS, CELERY_QUEUE);
   }
 
