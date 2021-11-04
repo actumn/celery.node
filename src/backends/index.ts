@@ -47,7 +47,7 @@ export function newCeleryBackend(
     return new RedisBackend(CELERY_BACKEND, CELERY_BACKEND_OPTIONS);
   }
 
-  if (brokerProtocol.startsWith("amqp")) {
+  if (['amqp', 'amqps'].indexOf(brokerProtocol) > -1) {
     return new AMQPBackend(CELERY_BACKEND, CELERY_BACKEND_OPTIONS);
   }
 
