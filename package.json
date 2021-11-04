@@ -1,6 +1,6 @@
 {
   "name": "celery-node",
-  "version": "0.5.7",
+  "version": "0.5.8",
   "description": "celery written in nodejs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -34,7 +34,7 @@
   },
   "homepage": "https://github.com/actumn/celery.node#readme",
   "devDependencies": {
-    "@types/amqplib": "^0.5.13",
+    "@types/amqplib": "^0.5.17",
     "@types/chai": "^4.2.9",
     "@types/ioredis": "^4.14.6",
     "@types/mocha": "^7.0.1",
@@ -55,7 +55,7 @@
     "typescript": "^3.7.2"
   },
   "dependencies": {
-    "amqplib": "^0.7.1",
+    "amqplib": "^0.8.0",
     "ioredis": "^4.14.0",
     "uuid": "^3.3.2"
   }
