@@ -14,7 +14,7 @@ export interface CeleryBackend {
  * @private
  * @constant
  */
-const supportedProtocols = ["redis", "amqp"];
+const supportedProtocols = ["redis", "amqp", "amqps"];
 
 /**
  * takes url string and after parsing scheme of url, returns protocol.
@@ -47,7 +47,7 @@ export function newCeleryBackend(
     return new RedisBackend(CELERY_BACKEND, CELERY_BACKEND_OPTIONS);
   }
 
-  if (brokerProtocol === "amqp") {
+  if (['amqp', 'amqps'].indexOf(brokerProtocol) > -1) {
     return new AMQPBackend(CELERY_BACKEND, CELERY_BACKEND_OPTIONS);
   }
 
