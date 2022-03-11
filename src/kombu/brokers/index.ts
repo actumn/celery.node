@@ -20,7 +20,7 @@ export interface CeleryBroker {
  * @private
  * @constant
  */
-const supportedProtocols = ["redis", "amqp", "amqps"];
+const supportedProtocols = ["redis", "rediss", "amqp", "amqps"];
 
 /**
  * takes url string and after parsing scheme of url, returns protocol.
@@ -51,7 +51,7 @@ export function newCeleryBroker(
   CELERY_QUEUE = "celery"
 ): CeleryBroker {
   const brokerProtocol = getProtocol(CELERY_BROKER);
-  if (brokerProtocol === "redis") {
+  if (['redis', 'rediss'].indexOf(brokerProtocol) > -1) {
     return new RedisBroker(CELERY_BROKER, CELERY_BROKER_OPTIONS);
   }
 

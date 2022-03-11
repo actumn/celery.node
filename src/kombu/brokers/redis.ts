@@ -53,10 +53,14 @@ export default class RedisBroker implements CeleryBroker {
    * @param {object} opts the options object for redis connect of ioredis
    */
   constructor(url: string, opts: object) {
-    this.redis = new Redis({
-      ...redisOptsFromUrl(url),
-      ...opts
-    });
+    if (url.startsWith("rediss://")){
+      this.redis = new Redis(url, {...opts});
+    } else {
+      this.redis = new Redis({
+        ...redisOptsFromUrl(url),
+        ...opts
+      });
+    }
   }
 
   /**
