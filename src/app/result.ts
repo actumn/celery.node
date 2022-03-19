@@ -38,7 +38,7 @@ export class AsyncResult {
    * @method AsyncResult#get
    * @returns {Promise}
    */
-  public get(timeout?: number, interval: number = 500): Promise<any> {
+  public get(timeout?: number, interval = 500): Promise<any> {
     const waitFor = (resolve: (value?: object) => void) => {
       let timeoutId: NodeJS.Timeout; // eslint-disable-line prefer-const
       let intervalId: NodeJS.Timeout; // eslint-disable-line prefer-const
