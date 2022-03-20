@@ -1,5 +1,4 @@
 import * as Redis from "ioredis";
-import * as urllib from "url";
 import { CeleryBackend } from ".";
 
 /**
@@ -10,27 +9,6 @@ import { CeleryBackend } from ".";
  * @type {string}
  */
 const keyPrefix = "celery-task-meta-";
-
-/**
- * codes from bull: https://github.com/OptimalBits/bull/blob/129c6e108ce67ca343c8532161d06742d92b651c/lib/queue.js#L296-L310
- * @private
- * @param {string} urlString
- */
-function redisOptsFromUrl(urlString: string): Redis.RedisOptions {
-  const redisOpts = {} as Redis.RedisOptions;
-  try {
-    const redisUrl = urllib.parse(urlString);
-    redisOpts.port = +redisUrl.port || 6379;
-    redisOpts.host = redisUrl.hostname;
-    redisOpts.db = redisUrl.pathname ? +redisUrl.pathname.split("/")[1] : 0;
-    if (redisUrl.auth) {
-      [, redisOpts.password] = redisUrl.auth.split(":");
-    }
-  } catch (e) {
-    throw new Error(e.message);
-  }
-  return redisOpts;
-}
 
 /**
  * @exports
@@ -45,14 +23,7 @@ export default class RedisBackend implements CeleryBackend {
    * @param {object} opts the options object for redis connect of ioredis
    */
   constructor(url: string, opts: object) {
-    if (url.startsWith("rediss://")){
-      this.redis = new Redis(url, {...opts});
-    } else {
-      this.redis = new Redis({
-        ...redisOptsFromUrl(url),
-        ...opts
-      });
-    }
+    this.redis = new Redis(url, {...opts});
   }
 
   /**
