@@ -114,7 +114,7 @@ export default class Worker extends Base {
           task: payload["task"],
           id: payload["id"],
           rootId: payload["root_id"],
-          parantId: payload["parentId"],
+          parentId: payload["parentId"],
           group: payload["group"],
           meth: payload["meth"],
           shadow: payload["shadow"],
