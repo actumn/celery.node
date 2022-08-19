@@ -1,6 +1,7 @@
 import * as url from "url";
 import RedisBroker from "./redis";
 import AMQPBroker from "./amqp";
+import SQSBroker from "./sqs";
 
 export interface CeleryBroker {
   isReady: () => Promise<any>;
@@ -20,7 +21,7 @@ export interface CeleryBroker {
  * @private
  * @constant
  */
-const supportedProtocols = ["redis", "rediss", "amqp", "amqps"];
+const supportedProtocols = ["redis", "rediss", "amqp", "amqps", "sqs"];
 
 /**
  * takes url string and after parsing scheme of url, returns protocol.
@@ -57,6 +58,10 @@ export function newCeleryBroker(
 
   if (['amqp', 'amqps'].indexOf(brokerProtocol) > -1) {
     return new AMQPBroker(CELERY_BROKER, CELERY_BROKER_OPTIONS, CELERY_QUEUE);
+  }
+
+  if (["sqs"].indexOf(brokerProtocol) > -1) {
+    return new SQSBroker(CELERY_BROKER, CELERY_BROKER_OPTIONS);
   }
 
   // do not reach here.
