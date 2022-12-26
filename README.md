@@ -41,7 +41,7 @@ Applications, also called as "Producers", "Publishers" register logical blocks o
 Workers, also called "Consumers" consume these "task" and optionally store any results to a "message backend".  
 The broker (task queue) receives tasks encapsulated as messages from "producers" and routes them to "consumers".
 
-But managing messages is not as simple as storing them in a data sotre as aqueue.  
+But managing messages is not as simple as storing them in a data store as a queue.  
 Suppose that a number of messages sent and dispatched by large number of producers and workers.  
 We have to consider below.
 - Detecting poison messages
