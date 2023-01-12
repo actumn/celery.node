@@ -121,8 +121,8 @@ export default class Client extends Base {
    * @example
    * client.createTask('task.add').delay([1, 2])
    */
-  public createTask(name: string): Task {
-    return new Task(this, name);
+  public createTask(name: string, options?: TaskOptions): Task {
+    return new Task(this, name, options);
   }
 
   /**
