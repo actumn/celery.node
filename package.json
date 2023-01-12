@@ -1,6 +1,6 @@
 {
   "name": "celery-node",
-  "version": "0.5.9",
+  "version": "0.5.10",
   "description": "celery written in nodejs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
