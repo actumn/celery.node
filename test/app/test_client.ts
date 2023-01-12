@@ -16,6 +16,12 @@ describe("celery functional tests", () => {
     "redis://localhost:6379/0"
   );
 
+  const worker2 = new Worker(
+    "redis://localhost:6379/0",
+    "redis://localhost:6379/0",
+    "my_queue"
+  );
+
   before(() => {
     worker.register("tasks.add", (a, b) => a + b);
     worker.register(
@@ -25,16 +31,21 @@ describe("celery functional tests", () => {
           setTimeout(() => resolve(result), delay);
         })
     );
-    worker.start();
+
+    worker2.register("tasks.multiply", (a, b) => a * b);
+    Promise.all([worker.start(), worker2.start()]);
   });
 
   afterEach(() => {
     sinon.restore();
-    return worker.whenCurrentJobsFinished();
+    return Promise.all([
+      worker.whenCurrentJobsFinished(),
+      worker2.whenCurrentJobsFinished()
+    ]);
   });
 
   after(() => {
-    Promise.all([client.disconnect(), worker.disconnect()]);
+    Promise.all([client.disconnect(), worker.disconnect(), worker2.disconnect()]);
 
     const redis = new Redis();
     redis.flushdb().then(() => redis.quit());
@@ -112,4 +123,24 @@ describe("celery functional tests", () => {
         })
     });
   });
+
+  describe("custom routing key", () => {
+    it("should create a task with another routing key", done => {
+      const task = client.createTask("tasks.multiply", { routingKey: "my_queue" });
+      const result = task.applyAsync([2, 3]);
+      result.get(500).then((message) => {
+        assert.equal(message, 6);
+      })
+      done();
+    });
+
+    it('should send_task with another routing key', done => {
+      const task = client.createTask("tasks.multiply");
+      const result = task.applyAsync([2, 3], undefined, { routingKey: "my_queue" });
+      result.get(500).then((message) => {
+        assert.equal(message, 6);
+      })
+      done();
+    })
+  })
 });
