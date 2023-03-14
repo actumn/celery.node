@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import * as Redis from "ioredis";
+import Redis from "ioredis";
 import Client from "../../src/app/client";
 import Worker from "../../src/app/worker";
 import { CeleryConf } from "../../src/app/conf";

@@ -1,6 +1,6 @@
 {
   "name": "celery-node",
-  "version": "0.5.9",
+  "version": "0.5.10",
   "description": "celery written in nodejs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -36,14 +36,13 @@
   "devDependencies": {
     "@types/amqplib": "^0.5.17",
     "@types/chai": "^4.2.9",
-    "@types/ioredis": "^4.28.5",
     "@types/mocha": "^7.0.1",
     "@types/sinon": "^9.0.9",
     "@types/uuid": "^3.4.7",
-    "@typescript-eslint/eslint-plugin": "^2.23.0",
-    "@typescript-eslint/parser": "^2.23.0",
+    "@typescript-eslint/eslint-plugin": "^5.54.1",
+    "@typescript-eslint/parser": "^5.54.1",
     "chai": "^4.2.0",
-    "eslint": "^7.16.0",
+    "eslint": "^7.32.0",
     "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-mocha": "^8.0.0",
@@ -52,11 +51,11 @@
     "prettier": "^1.19.1",
     "sinon": "^7.2.2",
     "ts-node": "^8.10.2",
-    "typescript": "^3.7.2"
+    "typescript": "^4.9.5"
   },
   "dependencies": {
     "amqplib": "^0.8.0",
-    "ioredis": "^4.28.5",
+    "ioredis": "^5.3.1",
     "uuid": "^3.3.2"
   }
 }

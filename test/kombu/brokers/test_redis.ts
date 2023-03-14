@@ -1,4 +1,4 @@
-// import * as Redis from "ioredis";
+// import Redis from "ioredis";
 // import { assert } from "chai";
 // import RedisBroker from "../../../src/kombu/brokers/redis";
 

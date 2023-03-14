@@ -2,7 +2,7 @@ import { assert } from "chai";
 import { AsyncResult } from "../../src/app/result";
 import RedisBackend from "../../src/backends/redis";
 import * as sinon from "sinon";
-import * as Redis from "ioredis";
+import Redis from "ioredis";
 
 describe("AsyncResult", () => {
   const redisBackend = new RedisBackend("redis://localhost:6379/0", {});

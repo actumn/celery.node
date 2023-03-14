@@ -36,7 +36,7 @@ export default class AMQPBroker implements CeleryBroker {
    * @method AMQPBroker#isReady
    * @returns {Promise} promises that continues if amqp connected.
    */
-  public isReady(): Promise<amqplib.Channel> {
+  public isReady(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.channel.then(ch => {
         Promise.all([

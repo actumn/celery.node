@@ -1,4 +1,4 @@
-import * as Redis from "ioredis";
+import Redis from "ioredis";
 import { v4 } from "uuid";
 import { CeleryBroker } from ".";
 import { Message } from "../message";
@@ -21,7 +21,7 @@ class RedisMessage extends Message {
 }
 
 export default class RedisBroker implements CeleryBroker {
-  redis: Redis.Redis;
+  redis: Redis;
   channels = [];
   closing = false;
 
