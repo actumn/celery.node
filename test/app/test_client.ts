@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import * as Redis from "ioredis";
+import { Redis } from "ioredis";
 import * as sinon from "sinon";
 import Client from "../../src/app/client";
 import Worker from "../../src/app/worker";
@@ -33,7 +33,7 @@ describe("celery functional tests", () => {
     return worker.whenCurrentJobsFinished();
   });
 
-  after(() => {
+  after(async () => {
     Promise.all([client.disconnect(), worker.disconnect()]);
 
     const redis = new Redis();
