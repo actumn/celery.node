@@ -48,15 +48,21 @@ function getProtocol(uri): string {
 export function newCeleryBroker(
   CELERY_BROKER: string,
   CELERY_BROKER_OPTIONS: any,
-  CELERY_QUEUE = "celery"
+  CELERY_QUEUE = "celery",
+  CELERY_QUEUE_OPTIONS = {}
 ): CeleryBroker {
   const brokerProtocol = getProtocol(CELERY_BROKER);
-  if (['redis', 'rediss'].indexOf(brokerProtocol) > -1) {
+  if (["redis", "rediss"].indexOf(brokerProtocol) > -1) {
     return new RedisBroker(CELERY_BROKER, CELERY_BROKER_OPTIONS);
   }
 
-  if (['amqp', 'amqps'].indexOf(brokerProtocol) > -1) {
-    return new AMQPBroker(CELERY_BROKER, CELERY_BROKER_OPTIONS, CELERY_QUEUE);
+  if (["amqp", "amqps"].indexOf(brokerProtocol) > -1) {
+    return new AMQPBroker(
+      CELERY_BROKER,
+      CELERY_BROKER_OPTIONS,
+      CELERY_QUEUE,
+      CELERY_QUEUE_OPTIONS
+    );
   }
 
   // do not reach here.

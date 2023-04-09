@@ -4,8 +4,10 @@ export interface CeleryConf {
   CELERY_BACKEND: string;
   CELERY_BACKEND_OPTIONS: object;
   CELERY_QUEUE: string;
+  CELERY_QUEUE_OPTIONS: object;
   TASK_PROTOCOL: number;
 }
+
 
 const DEFAULT_CELERY_CONF: CeleryConf = {
   CELERY_BROKER: "amqp://",
@@ -13,8 +15,10 @@ const DEFAULT_CELERY_CONF: CeleryConf = {
   CELERY_BACKEND: "amqp://",
   CELERY_BACKEND_OPTIONS: {},
   CELERY_QUEUE: "celery",
+  CELERY_QUEUE_OPTIONS: {},
   TASK_PROTOCOL: 2
 };
+
 
 function cloneObject(obj: object): object {
   const clone = {};

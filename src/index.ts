@@ -10,9 +10,10 @@ import Worker from "./app/worker";
 export function createClient(
   broker = "amqp://",
   backend = "amqp://",
-  queue = "celery"
+  queue = "celery",
+  queueOptions = {}
 ): Client {
-  return new Client(broker, backend, queue);
+  return new Client(broker, backend, queue, queueOptions);
 }
 
 /**
@@ -24,7 +25,8 @@ export function createClient(
 export function createWorker(
   broker = "amqp://",
   backend = "amqp://",
-  queue = "celery"
+  queue = "celery",
+  queueOptions = {}
 ): Worker {
-  return new Worker(broker, backend, queue);
+  return new Worker(broker, backend, queue, queueOptions);
 }
