@@ -1,5 +1,5 @@
 {
-  "name": "celery-node",
+  "name": "celery-node-revu",
   "version": "0.5.9",
   "description": "celery written in nodejs",
   "main": "dist/index.js",
